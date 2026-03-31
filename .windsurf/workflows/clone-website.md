@@ -134,6 +134,116 @@ Extract these from the page before doing anything else:
 
 **Global UI patterns** — Identify any site-wide CSS or JS: custom scrollbar hiding, scroll-snap on the page container, global keyframe animations, backdrop filters, gradients used as overlays, **smooth scroll libraries** (Lenis, Locomotive Scroll — check for `.lenis`, `.locomotive-scroll`, or custom scroll container classes). Add these to `globals.css` and note any libraries that need to be installed.
 
+### 3D & Animation Stack Detection (MANDATORY)
+
+This step is **non-negotiable** — run it immediately after global extraction. It determines which specialized skills every builder agent must load. Run this detection script via browser MCP:
+
+```javascript
+// Run via browser MCP to detect 3D/animation tech stack
+(function() {
+  const detected = {};
+
+  // Three.js / WebGL
+  const canvases = [...document.querySelectorAll('canvas')];
+  const webglCanvases = canvases.filter(c => {
+    try { return !!(c.getContext('webgl2') || c.getContext('webgl') || c.getContext('experimental-webgl')); } catch(e) { return false; }
+  });
+  detected.threejs = !!(window.THREE || document.querySelector('script[src*="three"]') || webglCanvases.length > 0);
+  detected.webglCanvasCount = webglCanvases.length;
+
+  // React Three Fiber / Drei
+  detected.r3f = !!(document.querySelector('[data-reactroot] canvas') && detected.threejs);
+
+  // GSAP
+  detected.gsap = !!(window.gsap || window.ScrollTrigger || window.ScrollSmoother ||
+    document.querySelector('script[src*="gsap"]') || document.querySelector('script[src*="ScrollTrigger"]'));
+  detected.gsapScrollTrigger = !!(window.ScrollTrigger || document.querySelector('script[src*="ScrollTrigger"]'));
+  detected.gsapScrollSmoother = !!(window.ScrollSmoother || document.querySelector('script[src*="ScrollSmoother"]'));
+  detected.gsapSplitText = !!(window.SplitText || document.querySelector('script[src*="SplitText"]'));
+  detected.gsapFlip = !!(window.Flip || document.querySelector('script[src*="Flip"]'));
+  detected.gsapDraggable = !!(window.Draggable || document.querySelector('script[src*="Draggable"]'));
+
+  // GLB/GLTF models — check performance entries for fetched .glb/.gltf files
+  const perfEntries = performance.getEntriesByType('resource').map(e => e.name);
+  detected.glbModels = perfEntries.filter(u => /\.(glb|gltf)(\?|$)/i.test(u));
+  detected.hasGLB = detected.glbModels.length > 0;
+
+  // Spline
+  detected.spline = !!(document.querySelector('script[src*="spline"]') || window.SPLINE_LOADER);
+
+  // Lottie
+  detected.lottie = !!(window.lottie || document.querySelector('lottie-player') ||
+    document.querySelector('script[src*="lottie"]') || document.querySelector('[data-lottie]'));
+
+  // Framer Motion (check for motion divs)
+  detected.framerMotion = !!(document.querySelector('[data-framer-component-type]') ||
+    document.querySelector('[style*="will-change: transform"]'));
+
+  // Shaders / custom WebGL
+  const scripts = [...document.querySelectorAll('script')];
+  const inlineScripts = scripts.map(s => s.textContent).join('');
+  detected.customShaders = /gl_FragColor|gl_Position|varying\s+vec|uniform\s+/i.test(inlineScripts);
+
+  // Smooth scroll libraries
+  detected.lenis = !!(document.querySelector('.lenis') || window.Lenis);
+  detected.locomotiveScroll = !!(document.querySelector('.locomotive-scroll') || window.LocomotiveScroll);
+
+  // Video/media
+  detected.videos = [...document.querySelectorAll('video')].map(v => ({
+    src: v.src || v.querySelector('source')?.src, autoplay: v.autoplay, loop: v.loop
+  }));
+
+  // Summary
+  detected.summary = [];
+  if (detected.threejs) detected.summary.push('Three.js');
+  if (detected.r3f) detected.summary.push('React Three Fiber');
+  if (detected.hasGLB) detected.summary.push('GLB/GLTF models (' + detected.glbModels.length + ')');
+  if (detected.gsap) detected.summary.push('GSAP');
+  if (detected.gsapScrollTrigger) detected.summary.push('GSAP ScrollTrigger');
+  if (detected.gsapScrollSmoother) detected.summary.push('GSAP ScrollSmoother');
+  if (detected.spline) detected.summary.push('Spline 3D');
+  if (detected.lottie) detected.summary.push('Lottie');
+  if (detected.framerMotion) detected.summary.push('Framer Motion');
+  if (detected.customShaders) detected.summary.push('Custom GLSL Shaders');
+  if (detected.lenis) detected.summary.push('Lenis Smooth Scroll');
+  if (detected.locomotiveScroll) detected.summary.push('Locomotive Scroll');
+
+  return JSON.stringify(detected, null, 2);
+})();
+```
+
+Save the detection results to `docs/research/TECH_STACK.md`. This file drives everything that follows.
+
+### Skill Loading Map (MANDATORY for builder agents)
+
+Based on what was detected, **every builder agent prompt MUST include the instruction to invoke the relevant skills** before writing any code. This is not optional — skills contain critical API patterns, gotchas, and best practices that prevent costly rewrites.
+
+| Detected Technology | Skills to Load (invoke via `Skill` tool) |
+|---|---|
+| **Three.js** | `threejs-fundamentals`, `threejs-lighting`, `threejs-materials` |
+| **Three.js + GLB models** | Above + `threejs-loaders`, `threejs-animation` |
+| **Three.js + custom shaders** | Above + `threejs-shaders`, `threejs-postprocessing` |
+| **Three.js + interactions** | Above + `threejs-interaction` |
+| **Three.js + geometry** | Above + `threejs-geometry`, `threejs-textures` |
+| **React Three Fiber** | All applicable `threejs-*` skills + check `@react-three/fiber` and `@react-three/drei` docs via `context7` |
+| **GSAP (basic)** | `gsap-core`, `gsap-react` (if React), `gsap-performance` |
+| **GSAP + ScrollTrigger** | Above + `gsap-scrolltrigger` |
+| **GSAP + plugins** | Above + `gsap-plugins` |
+| **GSAP + timelines** | Above + `gsap-timeline` |
+| **GSAP + framework** | Above + `gsap-frameworks` (for Vue/Svelte) or `gsap-react` (for React) |
+| **Spline 3D** | `spline-3d-integration` (if available), `threejs-fundamentals` as fallback |
+| **Lottie** | Check `context7` for `lottie-react` or `@lottiefiles/react-lottie-player` docs |
+| **Any 3D content** | `3d-web` or `3d-web-developer` for general 3D web patterns |
+| **Design/styling** | `frontend-patterns`, `soft-skill`, `taste-skill` for quality assurance |
+
+**How to include in builder prompts:** Add this block to EVERY builder agent that handles a section with detected 3D/animation tech:
+
+```
+BEFORE WRITING ANY CODE, you MUST invoke these skills (use the Skill tool):
+- [list relevant skills from the mapping above]
+These skills contain critical API patterns and gotchas. Do not skip this step.
+```
+
 ### Mandatory Interaction Sweep
 
 This is a dedicated pass AFTER screenshots and BEFORE anything else. Its purpose is to discover every behavior on the page — many of which are invisible in a static screenshot.
@@ -181,7 +291,18 @@ This is sequential. Do it yourself (not delegated to an agent) since it touches 
 3. **Create TypeScript interfaces** in `src/types/` for the content structures you've observed
 4. **Extract SVG icons** — find all inline `<svg>` elements on the page, deduplicate them, and save as named React components in `src/components/icons.tsx`. Name them by visual function (e.g., `SearchIcon`, `ArrowRightIcon`, `LogoIcon`).
 5. **Download global assets** — write and run a Node.js script (`scripts/download-assets.mjs`) that downloads all images, videos, and other binary assets from the page to `public/`. Preserve meaningful directory structure.
-6. Verify: `npm run build` passes
+6. **Install 3D/animation dependencies (if detected)** — Based on `docs/research/TECH_STACK.md`, install the required npm packages. This MUST happen in Phase 2 so builder agents can import them:
+   - **Three.js detected:** `npm install three @types/three` — and if React Three Fiber: `npm install @react-three/fiber @react-three/drei`
+   - **GSAP detected:** `npm install gsap` — includes ScrollTrigger, timeline, and all free plugins
+   - **GLB/GLTF models detected:** Ensure `threejs-loaders` skill patterns are used. Download all `.glb`/`.gltf` files found in `TECH_STACK.md` detection results to `public/models/`. Add GLTF loader setup.
+   - **Spline detected:** `npm install @splinetool/react-spline @splinetool/runtime`
+   - **Lottie detected:** `npm install lottie-react` or `@lottiefiles/react-lottie-player`
+   - **Lenis detected:** `npm install lenis`
+7. **Create 3D/animation wrapper utilities (if detected)** — If Three.js or GSAP was detected, create shared utilities:
+   - For Three.js: a reusable `SceneWrapper` component or R3F `<Canvas>` setup in `src/components/three/SceneWrapper.tsx` — invoke `threejs-fundamentals` skill for patterns
+   - For GSAP: a `useGSAP` hook wrapper in `src/hooks/useGSAP.ts` — invoke `gsap-react` skill for the correct cleanup pattern
+   - For GLB models: a `ModelLoader` component in `src/components/three/ModelLoader.tsx` — invoke `threejs-loaders` skill for async loading patterns
+8. Verify: `npm run build` passes
 
 ### Asset Discovery Script Pattern
 
@@ -296,6 +417,67 @@ Record the diff explicitly: "Property X changes from VALUE_A to VALUE_B, trigger
 
 6. **Assess complexity** — how many distinct sub-components does this section contain? A distinct sub-component is an element with its own unique styling, structure, and behavior (e.g., a card, a nav item, a search panel).
 
+7. **Extract 3D/animation specifics (if detected in TECH_STACK.md)** — For sections containing `<canvas>`, Three.js scenes, GSAP animations, or GLB models, run this additional extraction:
+
+```javascript
+// 3D Scene extraction — run via browser MCP on sections with <canvas>
+(function() {
+  const results = {};
+
+  // Canvas properties
+  const canvases = [...document.querySelectorAll('canvas')];
+  results.canvases = canvases.map((c, i) => {
+    const rect = c.getBoundingClientRect();
+    const cs = getComputedStyle(c);
+    return {
+      index: i,
+      width: c.width, height: c.height,
+      cssWidth: cs.width, cssHeight: cs.height,
+      position: cs.position,
+      zIndex: cs.zIndex,
+      boundingRect: { top: rect.top, left: rect.left, width: rect.width, height: rect.height },
+      parentClasses: c.parentElement?.className,
+      hasWebGL: !!(c.getContext('webgl2') || c.getContext('webgl'))
+    };
+  });
+
+  // GSAP animation targets — find all elements with GSAP-set inline transforms
+  const gsapTargets = [...document.querySelectorAll('[style*="translate"], [style*="transform"], [style*="opacity"]')];
+  results.gsapAnimatedElements = gsapTargets.slice(0, 50).map(el => ({
+    tag: el.tagName,
+    classes: el.className?.toString().slice(0, 100),
+    inlineStyle: el.style.cssText.slice(0, 300),
+    parentSection: el.closest('section')?.className || el.closest('[class*="section"]')?.className || 'unknown'
+  }));
+
+  // GSAP ScrollTrigger pins
+  results.pinnedElements = [...document.querySelectorAll('[style*="position: fixed"], .pin-spacer')].map(el => ({
+    tag: el.tagName, classes: el.className?.toString().slice(0, 100),
+    rect: el.getBoundingClientRect()
+  }));
+
+  // GLB/GLTF model URLs from network
+  const perfEntries = performance.getEntriesByType('resource');
+  results.models = perfEntries.filter(e => /\.(glb|gltf|obj|fbx|draco)(\?|$)/i.test(e.name)).map(e => ({
+    url: e.name, size: e.transferSize, duration: e.duration
+  }));
+
+  // Texture/HDR/environment map URLs
+  results.textures = perfEntries.filter(e => /\.(hdr|exr|ktx2|basis)(\?|$)/i.test(e.name)).map(e => e.name);
+
+  // Draco decoder check
+  results.useDraco = perfEntries.some(e => /draco/i.test(e.name));
+
+  return JSON.stringify(results, null, 2);
+})();
+```
+
+For GSAP-animated sections, also extract the animation sequence by observing it play:
+- Scroll slowly through and note which elements animate, in what order, with what effect (fade, slide, scale, rotate)
+- Record approximate scroll positions where each animation triggers
+- Check for `data-speed`, `data-lag`, `data-scroll` attributes that indicate scroll-driven libraries
+- Look for GSAP timeline markers: elements that animate in sequence suggest a timeline, elements that animate on scroll suggest ScrollTrigger
+
 ### Step 2: Write the Component Spec File
 
 For each section (or sub-component, if you're breaking it up), create a spec file in `docs/research/components/`. This is NOT optional — every builder must have a corresponding spec file.
@@ -367,6 +549,29 @@ For each section (or sub-component, if you're breaking it up), create a spec fil
 - **Tablet (768px):** <what changes — e.g., "maintains 2-column, gap reduces to 16px">
 - **Mobile (390px):** <what changes — e.g., "stacks to single column, images full-width">
 - **Breakpoint:** layout switches at ~<N>px
+
+## 3D Scene (if applicable — include this section for any component with <canvas> or Three.js)
+- **Required skills to load:** <list from Skill Loading Map, e.g., threejs-fundamentals, threejs-loaders, threejs-lighting>
+- **Canvas dimensions:** <width x height, CSS sizing strategy>
+- **Camera:** <type (perspective/orthographic), FOV, position, lookAt target>
+- **GLB/GLTF models:** <list all model URLs from detection, download paths in public/models/>
+- **Lighting setup:** <ambient + directional + env map details from visual inspection>
+- **Materials:** <PBR, glass, emissive — describe what you see>
+- **Animations:** <auto-rotate, scroll-driven rotation, hover interaction, GLTF animations>
+- **Post-processing:** <bloom, DOF, tone mapping — visible effects>
+- **Controls:** <OrbitControls, drag, scroll-to-rotate>
+- **Performance:** <Draco compression, texture compression, LOD, lazy loading>
+- **Fallback:** <what shows while 3D loads — loading spinner, placeholder image>
+
+## GSAP Animations (if applicable — include for any component with GSAP-driven animations)
+- **Required skills to load:** <list from Skill Loading Map, e.g., gsap-core, gsap-react, gsap-scrolltrigger>
+- **Animation type:** <entrance animation | scroll-triggered | timeline sequence | hover effect>
+- **ScrollTrigger config:** <trigger element, start/end positions, scrub value, pin behavior>
+- **Timeline sequence:** <ordered list of animation steps with approximate durations and delays>
+- **Stagger pattern:** <which elements stagger, delay between each, direction>
+- **Easing:** <observed easing curve — e.g., power2.out, elastic, custom>
+- **SplitText:** <if text splitting is used — by chars, words, or lines>
+- **Cleanup:** <useGSAP pattern with dependency array, ScrollTrigger.kill()>
 ```
 
 Fill every section. If a section doesn't apply (e.g., no states for a static footer), write "N/A" — but think twice before marking States & Behaviors as N/A. Even a footer might have hover states on links.
@@ -386,6 +591,19 @@ Based on complexity, dispatch builder agent(s) in worktree(s):
 - The target file path (e.g., `src/components/HeroSection.tsx`)
 - Instruction to verify with `npx tsc --noEmit` before finishing
 - For responsive behavior: the specific breakpoint values and what changes
+- **For 3D/animation sections (MANDATORY):** An explicit `BEFORE WRITING ANY CODE` block listing the skills the builder MUST invoke via the `Skill` tool, based on the Skill Loading Map. Example for a section with a Three.js GLB viewer and GSAP scroll animations:
+  ```
+  BEFORE WRITING ANY CODE, you MUST invoke these skills (use the Skill tool):
+  1. threejs-fundamentals — scene setup, camera, renderer patterns
+  2. threejs-loaders — GLTF/GLB loading with Draco, async patterns
+  3. threejs-lighting — light setup for the scene
+  4. threejs-materials — PBR material configuration
+  5. gsap-core — animation fundamentals
+  6. gsap-react — useGSAP hook, cleanup, context-safe callbacks
+  7. gsap-scrolltrigger — scroll-linked animation configuration
+  These skills contain CRITICAL API patterns. Skipping them will produce broken code.
+  ```
+  Also include: the 3D Scene and/or GSAP Animations sections from the spec, paths to downloaded GLB models in `public/models/`, and any shared Three.js wrappers created in Phase 2.
 
 **Don't wait.** As soon as you've dispatched the builder(s) for one section, move to extracting the next section. Builders work in parallel in their worktrees while you continue extraction.
 
@@ -439,6 +657,12 @@ Before dispatching ANY builder agent, verify you can check every box. If you can
 - [ ] Responsive behavior is documented for at least desktop and mobile
 - [ ] Text content is verbatim from the site, not paraphrased
 - [ ] The builder prompt is under ~150 lines of spec; if over, the section needs to be split
+- [ ] For 3D sections: GLB/GLTF models are downloaded to `public/models/` and paths verified
+- [ ] For 3D sections: the "3D Scene" spec section is filled with camera, lighting, materials, animations
+- [ ] For 3D sections: required skills are listed in the spec AND in the builder prompt's BEFORE WRITING block
+- [ ] For GSAP sections: the "GSAP Animations" spec section is filled with animation type, triggers, easing, sequence
+- [ ] For GSAP sections: required skills are listed in the spec AND in the builder prompt's BEFORE WRITING block
+- [ ] For any 3D/animation section: npm dependencies were installed in Phase 2 step 6
 
 ## What NOT to Do
 
@@ -457,6 +681,12 @@ These are lessons from previous failed clones — each one cost hours of rework:
 - **Don't skip responsive extraction.** If you only inspect at desktop width, the clone will break at tablet and mobile. Test at 1440, 768, and 390 during extraction.
 - **Don't forget smooth scroll libraries.** Check for Lenis (`.lenis` class), Locomotive Scroll, or similar. Default browser scrolling feels noticeably different and the user will spot it immediately.
 - **Don't dispatch builders without a spec file.** The spec file forces exhaustive extraction and creates an auditable artifact. Skipping it means the builder gets whatever you can fit in a prompt from memory.
+- **Don't dispatch 3D/GSAP builders without skill loading instructions.** A builder agent that doesn't invoke `threejs-fundamentals` or `gsap-react` will guess at API patterns and produce broken code. The skill loading block in the builder prompt is mandatory for any section with detected 3D or animation tech.
+- **Don't build a static image where the original has a 3D scene.** If a section contains a `<canvas>` with WebGL, it's a 3D scene — not a screenshot. Extract the models, lighting, and camera setup. Build an actual Three.js or R3F scene.
+- **Don't forget to download GLB/GLTF models.** They're binary assets just like images. If the detection script found `.glb` URLs, download them to `public/models/` in Phase 2.
+- **Don't use Three.js directly when R3F was detected.** If the original uses React Three Fiber (`@react-three/fiber`), use R3F in the clone — not raw Three.js with imperative DOM manipulation. They have completely different paradigms.
+- **Don't skip GSAP cleanup.** Every GSAP animation in a React component MUST use `useGSAP` with proper cleanup. Memory leaks from un-killed ScrollTriggers are invisible but cumulative.
+- **Don't hardcode GSAP scroll positions.** Use relative triggers (`"top center"`, `"+=500"`) not absolute pixel values. The page length changes as content is added.
 
 ## Completion
 
