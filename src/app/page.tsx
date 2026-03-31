@@ -1,9 +1,23 @@
+import { Header } from "@/components/Header";
+import { HeroSection } from "@/components/HeroSection";
+import { ClientsSection } from "@/components/ClientsSection";
+import { AwardsSection } from "@/components/AwardsSection";
+import { CapabilitiesSection } from "@/components/CapabilitiesSection";
+import { CTASection } from "@/components/CTASection";
+import { FooterSection } from "@/components/FooterSection";
+
 export default function Home() {
   return (
-    <main className="flex min-h-screen items-center justify-center">
-      <p className="text-muted-foreground">
-        Clone target not yet built. Run <code className="font-mono text-foreground">/clone-website</code> to start.
-      </p>
-    </main>
+    <>
+      <Header />
+      <main className="h-screen overflow-y-auto overflow-x-hidden scroll-smooth">
+        <HeroSection />
+        <ClientsSection />
+        <AwardsSection />
+        <CapabilitiesSection />
+        <CTASection />
+        <FooterSection />
+      </main>
+    </>
   );
 }
