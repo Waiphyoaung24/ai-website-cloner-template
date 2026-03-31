@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface LogoItem {
@@ -45,24 +44,21 @@ function MarqueeRow({
   return (
     <div className={cn("overflow-hidden", className)}>
       <div
-        className="animate-marquee-left flex w-max items-center gap-20"
-        style={{ animationDuration: `${duration}s` }}
+        className="animate-marquee-left flex w-max items-center"
+        style={{ animationDuration: `${duration}s`, gap: "clamp(40px, 6vw, 100px)" }}
       >
-        {/* Render logos twice for seamless infinite scroll */}
         {[...logos, ...logos].map((logo, index) => (
-          <Image
+          <img
             key={`${logo.alt}-${index}`}
             src={logo.src}
             alt={logo.alt}
-            width={0}
-            height={logoHeight}
-            className="h-auto w-auto opacity-80"
+            className="opacity-90"
             style={{
-              height: `${logoHeight}px`,
               width: "auto",
+              height: "auto",
+              maxHeight: `${logoHeight}px`,
               filter: "brightness(0) invert(1)",
             }}
-            unoptimized
           />
         ))}
       </div>
@@ -72,29 +68,31 @@ function MarqueeRow({
 
 export function ClientsSection() {
   return (
-    <section className="overflow-hidden bg-black py-20">
-      <div className="mb-16 flex items-start justify-between px-[60px]">
-        <h2 className="text-[32px] font-normal uppercase tracking-[2px] text-white">
+    <section className="overflow-hidden bg-black py-16 md:py-24">
+      {/* Heading row */}
+      <div className="mb-10 flex flex-col gap-4 px-6 md:mb-16 md:flex-row md:items-start md:justify-between md:px-[60px]">
+        <h2 className="text-xl font-normal uppercase tracking-[2px] text-white md:text-[32px]">
           BRANDS WE WORK WITH
         </h2>
-        <p className="max-w-[200px] text-right text-[10px] font-medium uppercase tracking-[1px] text-white">
+        <p className="max-w-[250px] text-[10px] font-medium uppercase tracking-[1px] text-white md:text-right">
           TRUSTED BY GLOBAL BRANDS, CULTURAL INSTITUTIONS, AND FORWARD THINKING
           TEAMS.
         </p>
       </div>
 
-      <MarqueeRow logos={row1Logos} duration={30} logoHeight={30} />
+      {/* Marquee rows — enlarged logos */}
+      <MarqueeRow logos={row1Logos} duration={25} logoHeight={100} />
       <MarqueeRow
         logos={row2Logos}
-        duration={35}
-        logoHeight={40}
-        className="mt-12"
+        duration={30}
+        logoHeight={110}
+        className="mt-10 md:mt-14"
       />
       <MarqueeRow
         logos={row3Logos}
-        duration={25}
-        logoHeight={30}
-        className="mt-12"
+        duration={20}
+        logoHeight={100}
+        className="mt-10 md:mt-14"
       />
     </section>
   );

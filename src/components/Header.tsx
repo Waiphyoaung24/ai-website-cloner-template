@@ -8,7 +8,7 @@ export function Header() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50",
-        "px-[60px] py-10",
+        "px-4 py-5 md:px-[60px] md:py-10",
         "flex items-center justify-between"
       )}
     >
