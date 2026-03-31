@@ -117,15 +117,17 @@ export function FooterSection() {
         </div>
       </footer>
 
-      {/* Back-to-top Button */}
-      <button
-        type="button"
-        onClick={scrollToTop}
-        className="fixed bottom-10 right-10 w-12 h-12 rounded-full bg-black text-white flex items-center justify-center z-50 hover:bg-black/80 transition cursor-pointer"
-        aria-label="Back to top"
-      >
-        <ArrowUp size={20} />
-      </button>
+      {/* Back-to-top Button — positioned within footer */}
+      <div className="relative">
+        <button
+          type="button"
+          onClick={scrollToTop}
+          className="absolute -top-24 right-10 w-12 h-12 rounded-full bg-black text-white flex items-center justify-center hover:bg-black/80 transition cursor-pointer"
+          aria-label="Back to top"
+        >
+          <ArrowUp size={20} />
+        </button>
+      </div>
     </>
   );
 }

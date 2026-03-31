@@ -40,33 +40,26 @@ export function HeroSection({ className }: { className?: string }) {
         ))}
       </div>
 
-      {/* Left text block */}
-      <div className="absolute bottom-[60px] left-[60px] z-10">
-        <div
-          className="text-[min(4vw,48px)] font-normal uppercase leading-[1.15] tracking-[2px] text-white"
-        >
+      {/* Text overlay — two column layout at bottom */}
+      <div className="absolute inset-x-[60px] bottom-[60px] z-10 flex items-end justify-between">
+        {/* Left text block */}
+        <div className="text-[min(3.5vw,44px)] font-normal uppercase leading-[1.2] tracking-[2px] text-white">
           <div>WE ARE</div>
           <div>LUSION</div>
           <div>A CREATIVE</div>
           <div className="italic">PRODUCTION STUDIO</div>
         </div>
-      </div>
 
-      {/* Right text block */}
-      <div className="absolute bottom-[60px] right-[200px] z-10 text-right">
-        <div
-          className="text-[min(4vw,48px)] font-normal uppercase italic leading-[1.15] tracking-[2px] text-white"
-        >
-          <div>CRAFTING UNIQUE</div>
-          <div>DIGITAL EXPERIENCES</div>
+        {/* Right text block + scroll prompt */}
+        <div className="text-right">
+          <div className="text-[min(3.5vw,44px)] font-normal uppercase italic leading-[1.2] tracking-[2px] text-white">
+            <div>CRAFTING UNIQUE</div>
+            <div>DIGITAL EXPERIENCES</div>
+          </div>
+          <span className="mt-4 inline-block text-[10px] font-medium uppercase tracking-[2px] text-white/50">
+            SCROLL TO EXPLORE
+          </span>
         </div>
-      </div>
-
-      {/* Scroll prompt */}
-      <div className="absolute bottom-[60px] right-[60px] z-10">
-        <span className="text-[10px] font-medium uppercase tracking-[2px] text-white/50">
-          SCROLL TO EXPLORE
-        </span>
       </div>
     </section>
   );
