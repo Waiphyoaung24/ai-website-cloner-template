@@ -184,3 +184,19 @@ html, body {
 .animate-marquee-right {
   animation: marquee-right 30s linear infinite;
 }
+
+/* Respect prefers-reduced-motion for all continuous animations */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee-left,
+  .animate-marquee-right {
+    animation-play-state: paused;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

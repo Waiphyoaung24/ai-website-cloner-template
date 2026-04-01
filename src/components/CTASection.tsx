@@ -1,4 +1,8 @@
+"use client";
+
+import { useRef, useEffect } from "react";
 import { ArrowDown } from "lucide-react";
+import gsap from "gsap";
 import { cn } from "@/lib/utils";
 
 const confettiPieces = Array.from({ length: 80 }, (_, i) => ({
@@ -7,10 +11,33 @@ const confettiPieces = Array.from({ length: 80 }, (_, i) => ({
   top: `${(i * 23 + 10) % 100}%`,
   rotation: (i * 37) % 360,
   size: 8 + (i % 6) * 2,
-  opacity: 0.5 + (i % 4) * 0.15,
+  opacity: 0.3 + (i % 4) * 0.1,
 }));
 
 export function CTASection() {
+  const watermarkRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!watermarkRef.current) return;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) return;
+
+    const tween = gsap.to(watermarkRef.current, {
+      rotation: 360,
+      duration: 40,
+      repeat: -1,
+      ease: "none",
+    });
+
+    return () => {
+      tween.kill();
+    };
+  }, []);
+
   return (
     <section
       className={cn(
@@ -19,6 +46,21 @@ export function CTASection() {
         "relative overflow-hidden"
       )}
     >
+      {/* Rotating logo watermark */}
+      <div
+        ref={watermarkRef}
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+      >
+        {/* SVG export is broken (empty file) — use PNG instead */}
+        <img
+          src="/images/Black_outline.png"
+          alt=""
+          width={600}
+          height={600}
+          className="w-[300px] h-[300px] md:w-[600px] md:h-[600px] opacity-[0.06] invert"
+        />
+      </div>
+
       {/* Cross markers */}
       <div
         className="absolute top-[120px] left-[20%] text-white/50 text-xl font-light select-none"
@@ -69,11 +111,15 @@ export function CTASection() {
       <div className="absolute bottom-16 z-10">
         <button
           type="button"
+          aria-label="Keep exploring — scroll down"
           className={cn(
             "flex items-center gap-3",
             "px-6 py-3 rounded-full",
             "bg-white/90 text-black",
-            "text-[11px] font-medium uppercase tracking-[1px]"
+            "text-[11px] font-medium uppercase tracking-[1px]",
+            "cursor-pointer transition-all duration-200 ease-out",
+            "hover:bg-white hover:shadow-lg hover:scale-105",
+            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           )}
         >
           <ArrowDown size={14} />

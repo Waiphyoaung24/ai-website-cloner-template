@@ -1,13 +1,15 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
+import Image from "next/image";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { cn } from "@/lib/utils";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, SplitText);
+  gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
 }
 
 // ──────────────────────────────────────────────
@@ -60,7 +62,7 @@ function SplineEmbed({ url }: { url: string }) {
 export function HeroSection({ className }: { className?: string }) {
   const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     const section = sectionRef.current;
     if (!section) return;
 
@@ -76,7 +78,9 @@ export function HeroSection({ className }: { className?: string }) {
     const heroTitle = section.querySelector(".hero-title");
     const crossMarkers = section.querySelector(".hero-cross-markers");
     const scrollPrompt = section.querySelector(".hero-scroll-prompt");
+    const heroLogo = section.querySelector(".hero-logo");
 
+    // Title parallax on scroll
     if (heroTitle) {
       gsap.to(heroTitle, {
         y: -80,
@@ -115,6 +119,7 @@ export function HeroSection({ className }: { className?: string }) {
       });
     }
 
+    // Cross markers fade on scroll
     if (crossMarkers) {
       gsap.to(crossMarkers, {
         autoAlpha: 0,
@@ -129,6 +134,7 @@ export function HeroSection({ className }: { className?: string }) {
       });
     }
 
+    // Scroll prompt fade on scroll
     if (scrollPrompt) {
       gsap.to(scrollPrompt, {
         autoAlpha: 0,
@@ -144,13 +150,49 @@ export function HeroSection({ className }: { className?: string }) {
       });
     }
 
-    const triggers = ScrollTrigger.getAll().filter(
-      (t) => t.trigger === section || t.vars.trigger === section,
-    );
-    return () => {
-      triggers.forEach((t) => t.kill());
-    };
-  }, []);
+    // Logo animations (right-side positioned)
+    if (heroLogo) {
+      // Entrance: slide in from right with fade
+      gsap.from(heroLogo, {
+        x: 60,
+        autoAlpha: 0,
+        duration: 1.4,
+        delay: 0.3,
+        ease: "power3.out",
+      });
+
+      // Continuous float (gentle vertical bob)
+      gsap.to(heroLogo, {
+        y: -12,
+        duration: 2.5,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      // Glow pulse via drop-shadow filter
+      gsap.to(heroLogo, {
+        filter: "drop-shadow(0 0 30px rgba(148,252,255,0.4))",
+        duration: 2,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+      });
+
+      // Parallax on scroll
+      gsap.to(heroLogo, {
+        y: -120,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          scroller,
+          start: "top top",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section
@@ -177,6 +219,19 @@ export function HeroSection({ className }: { className?: string }) {
         {CROSS_POSITIONS.map((x) => (
           <CrossMarker key={x} xPercent={x} />
         ))}
+      </div>
+
+      {/* Logo — positioned on the right side */}
+      <div className="hero-logo pointer-events-none absolute right-6 top-[30%] z-[5] md:right-[60px] md:top-[25%]">
+        <Image
+          src="/images/full_color_logo.png"
+          alt=""
+          width={220}
+          height={220}
+          className="h-[100px] w-[100px] object-contain md:h-[200px] md:w-[200px]"
+          style={{ filter: "drop-shadow(0 0 15px rgba(148,252,255,0.2))" }}
+          priority
+        />
       </div>
 
       {/* NEX APEX title */}

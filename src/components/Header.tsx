@@ -15,9 +15,21 @@ export function Header() {
       {/* Logo */}
       <Link
         href="/"
-        className="text-[14px] md:text-[20px] whitespace-nowrap font-bold uppercase font-[family-name:var(--font-display)] tracking-[3px] text-white"
+        className="flex items-center gap-2 cursor-pointer"
       >
-        NEX APEX
+        {/* Use <img> instead of Next <Image> because the SVG is broken
+            (contains only a white-filled rectangle). The PNG has the
+            actual logomark on a transparent background. */}
+        <img
+          src="/images/Flat_white.png"
+          alt="NexApex"
+          width={36}
+          height={36}
+          className="h-7 w-7 md:h-9 md:w-9 object-contain"
+        />
+        <span className="text-[14px] md:text-[20px] whitespace-nowrap font-bold uppercase font-[family-name:var(--font-display)] tracking-[3px] text-white">
+          NEX APEX
+        </span>
       </Link>
 
       {/* Button group */}

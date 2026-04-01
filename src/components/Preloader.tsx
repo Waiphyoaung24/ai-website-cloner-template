@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
+import Image from "next/image";
 import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(useGSAP);
 
 function DigitRoller({ value }: { value: number }) {
   const wrapRef = useRef<HTMLDivElement>(null);
   const colRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useGSAP(() => {
     if (!colRef.current || !wrapRef.current) return;
     const digitH = wrapRef.current.offsetHeight;
     gsap.to(colRef.current, {
@@ -15,7 +19,7 @@ function DigitRoller({ value }: { value: number }) {
       duration: 0.5,
       ease: "power2.out",
     });
-  }, [value]);
+  }, { dependencies: [value], scope: wrapRef });
 
   return (
     <div
@@ -41,13 +45,27 @@ function DigitRoller({ value }: { value: number }) {
 export function Preloader() {
   const overlayRef = useRef<HTMLDivElement>(null);
   const digitsRef = useRef<HTMLDivElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
   const [displayProgress, setDisplayProgress] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const exitTriggered = useRef(false);
   const progressObj = useRef({ value: 0 });
 
-  /* Smooth GSAP tween from 0 → 100 over ~2.5s */
-  useEffect(() => {
+  /* Entrance animation: logo scales from 0.5/invisible to full size
+     over the 2.5s counter duration, then exit fires. */
+  useGSAP(() => {
+    // Set initial states explicitly so autoAlpha works correctly
+    gsap.set(logoRef.current, { scale: 0.5, autoAlpha: 0 });
+
+    // Logo entrance: scale 0.5 -> 1, opacity 0 -> 1 over 2.5s
+    gsap.to(logoRef.current, {
+      scale: 1,
+      autoAlpha: 1,
+      duration: 2.5,
+      ease: "power2.out",
+    });
+
+    // Counter progress: 0 -> 100 over 2.5s
     gsap.to(progressObj.current, {
       value: 100,
       duration: 2.5,
@@ -57,11 +75,11 @@ export function Preloader() {
         setDisplayProgress(v);
       },
     });
-  }, []);
+  }, { scope: overlayRef });
 
-  /* Exit animation — fires once when displayProgress reaches 100 */
-  useEffect(() => {
-    if (displayProgress < 100 || exitTriggered.current) return;
+  /* Exit animation -- fires once when counter reaches 100 */
+  const triggerExit = useCallback(() => {
+    if (exitTriggered.current) return;
     exitTriggered.current = true;
 
     const tl = gsap.timeline({
@@ -69,19 +87,35 @@ export function Preloader() {
       onComplete: () => setIsDone(true),
     });
 
+    // Logo: zoom out to 1.5x and fade
+    tl.to(logoRef.current, {
+      scale: 1.5,
+      autoAlpha: 0,
+      duration: 0.8,
+      ease: "power3.inOut",
+    }, 0);
+
+    // Digits: slide up and fade
     tl.to(digitsRef.current, {
       y: -80,
       autoAlpha: 0,
       duration: 0.7,
       ease: "power3.inOut",
-    });
+    }, 0);
 
-    tl.to(
-      overlayRef.current,
-      { autoAlpha: 0, duration: 1, ease: "power2.inOut" },
-      "-=0.3",
-    );
-  }, [displayProgress]);
+    // Overlay: fade out last (overlaps slightly with above)
+    tl.to(overlayRef.current, {
+      autoAlpha: 0,
+      duration: 1,
+      ease: "power2.inOut",
+    }, "-=0.3");
+  }, []);
+
+  useGSAP(() => {
+    if (displayProgress >= 100) {
+      triggerExit();
+    }
+  }, { dependencies: [displayProgress] });
 
   if (isDone) return null;
 
@@ -91,6 +125,23 @@ export function Preloader() {
 
   return (
     <div ref={overlayRef} className="fixed inset-0 z-[200] bg-[#0e1418]">
+      {/* Centered logo */}
+      <div
+        ref={logoRef}
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ visibility: "hidden" }}
+      >
+        <Image
+          src="/images/full_color_logo.png"
+          alt="NexApex"
+          width={280}
+          height={280}
+          className="w-[140px] h-[140px] md:w-[280px] md:h-[280px] object-contain"
+          priority
+        />
+      </div>
+
+      {/* Counter digits */}
       <div
         ref={digitsRef}
         className="absolute bottom-0 left-0 flex pl-2 md:pl-0 font-sans font-light tracking-[-0.02em] text-white"

@@ -1,4 +1,13 @@
+"use client";
+
+import { useRef, useEffect } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { cn } from "@/lib/utils";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface LogoItem {
   src: string;
@@ -51,7 +60,7 @@ function MarqueeRow({
           <img
             key={`${logo.alt}-${index}`}
             src={logo.src}
-            alt={logo.alt}
+            alt={`${logo.alt} logo`}
             className="opacity-90"
             style={{
               width: "auto",
@@ -67,20 +76,75 @@ function MarqueeRow({
 }
 
 export function ClientsSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const scroller = document.querySelector("main");
+    if (!scroller) return;
+
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) return;
+
+    // Heading reveal animation
+    const heading = section.querySelector(".clients-heading");
+    const desc = section.querySelector(".clients-desc");
+
+    if (heading) {
+      gsap.from(heading, {
+        y: 40,
+        autoAlpha: 0,
+        duration: 0.7,
+        ease: "power3.out",
+        scrollTrigger: {
+          trigger: heading,
+          scroller,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    }
+
+    if (desc) {
+      gsap.from(desc, {
+        y: 30,
+        autoAlpha: 0,
+        duration: 0.6,
+        delay: 0.15,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: heading,
+          scroller,
+          start: "top 85%",
+          toggleActions: "play none none reverse",
+        },
+      });
+    }
+
+    return () => {
+      ScrollTrigger.getAll().forEach((t) => t.kill());
+    };
+  }, []);
+
   return (
-    <section className="overflow-hidden bg-[#0e1418] py-16 md:py-24">
+    <section ref={sectionRef} className="overflow-hidden bg-[#0e1418] py-16 md:py-24">
       {/* Heading row */}
       <div className="mb-10 flex flex-col gap-4 px-6 md:mb-16 md:flex-row md:items-start md:justify-between md:px-[60px]">
-        <h2 className="text-xl font-normal uppercase tracking-[2px] text-white md:text-[32px]">
+        <h2 className="clients-heading text-xl font-normal uppercase tracking-[2px] text-white md:text-[32px]">
           TRUSTED PARTNERS
         </h2>
-        <p className="max-w-[250px] text-[10px] font-medium uppercase tracking-[1px] text-white md:text-right">
+        <p className="clients-desc max-w-[250px] text-[10px] font-medium uppercase tracking-[1px] text-white md:text-right">
           POWERING AI SOLUTIONS FOR GLOBAL BRANDS AND FORWARD-THINKING
           TEAMS.
         </p>
       </div>
 
-      {/* Marquee rows — enlarged logos */}
+      {/* Marquee rows -- enlarged logos */}
       <MarqueeRow logos={row1Logos} duration={25} logoHeight={100} />
       <MarqueeRow
         logos={row2Logos}
