@@ -1,5 +1,6 @@
 "use client";
 
+import "@/lib/patch-three-clock"; // Must be first — patches THREE.Clock before R3F loads
 import { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment, ContactShadows } from "@react-three/drei";
