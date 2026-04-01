@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -33,6 +33,12 @@ function CrossMarker({ xPercent }: { xPercent: number }) {
 
 function SplineEmbed({ url }: { url: string }) {
   const [loaded, setLoaded] = useState(false);
+
+  // Fallback: force-show after 3s if onLoad doesn't fire (cross-origin iframes)
+  useEffect(() => {
+    const id = setTimeout(() => setLoaded(true), 3000);
+    return () => clearTimeout(id);
+  }, []);
 
   if (!url || url === "PASTE_YOUR_SPLINE_URL_HERE") return null;
 

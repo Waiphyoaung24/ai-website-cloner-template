@@ -1,6 +1,7 @@
 import { Header } from "@/components/Header";
 import { HeroSection } from "@/components/HeroSection";
 import { ClientsSection } from "@/components/ClientsSection";
+import { ThreeShowcase } from "@/components/ThreeShowcase";
 import { AwardsSection } from "@/components/AwardsSection";
 import { CapabilitiesSection } from "@/components/CapabilitiesSection";
 import { CTASection } from "@/components/CTASection";
@@ -15,6 +16,7 @@ export default function Home() {
       <main className="h-screen overflow-y-auto overflow-x-hidden scroll-smooth">
         <HeroSection />
         <ClientsSection />
+        <ThreeShowcase />
         <AwardsSection />
         <CapabilitiesSection />
         <CTASection />
