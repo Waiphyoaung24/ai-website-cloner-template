@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { cn } from "@/lib/utils";
+import { BackgroundPaths } from "@/components/ui/background-paths";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
@@ -219,6 +220,11 @@ export function HeroSection({ className }: { className?: string }) {
 
       {/* Spline 3D Interactive Tiles */}
       <SplineEmbed url={SPLINE_EMBED_URL} />
+
+      {/* Animated SVG paths — overlays Spline, pointer-events-none keeps tiles interactive */}
+      <div className="absolute inset-0 z-[3] pointer-events-none">
+        <BackgroundPaths />
+      </div>
 
       {/* Cross markers */}
       <div className="hero-cross-markers pointer-events-none absolute inset-0 z-[2]">
