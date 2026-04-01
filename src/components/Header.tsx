@@ -8,16 +8,16 @@ export function Header() {
     <header
       className={cn(
         "fixed top-0 left-0 right-0 z-50",
-        "px-4 py-5 md:px-[60px] md:py-10",
+        "px-4 py-4 md:px-[60px] md:py-10",
         "flex items-center justify-between"
       )}
     >
       {/* Logo */}
       <Link
         href="/"
-        className="text-[20px] font-bold uppercase tracking-[2px] text-white"
+        className="text-[14px] md:text-[20px] whitespace-nowrap font-bold uppercase font-[family-name:var(--font-display)] tracking-[3px] text-white"
       >
-        LUSION
+        NEX APEX
       </Link>
 
       {/* Button group */}
@@ -27,9 +27,9 @@ export function Header() {
           type="button"
           aria-label="Toggle"
           className={cn(
-            "flex h-[45px] w-[45px] items-center justify-center",
-            "rounded-full bg-[#2b2e3a]",
-            "transition-colors hover:bg-[#3a3d4a]"
+            "hidden md:flex h-[45px] w-[45px] items-center justify-center",
+            "rounded-full bg-[#1a2630]",
+            "transition-colors hover:bg-[#253a49]"
           )}
         >
           {/* Horizontal line (minus) icon */}
@@ -40,13 +40,13 @@ export function Header() {
         <button
           type="button"
           className={cn(
-            "flex items-center gap-2",
-            "rounded-full bg-[#2b2e3a] px-6 py-3",
+            "hidden md:flex items-center gap-2",
+            "rounded-full bg-[#1a2630] px-6 py-3",
             "font-mono text-[12px] font-medium uppercase tracking-[1px] text-white",
-            "transition-colors hover:bg-[#3a3d4a]"
+            "transition-colors hover:bg-[#253a49]"
           )}
         >
-          <span>LET&apos;S TALK</span>
+          <span>CONTACT</span>
           {/* Small white dot indicator */}
           <span className="block h-1 w-1 rounded-full bg-white" />
         </button>
@@ -56,9 +56,9 @@ export function Header() {
           type="button"
           className={cn(
             "flex items-center gap-2",
-            "rounded-full bg-[#e4e6ef] px-6 py-3",
+            "rounded-full bg-[#dfe4dc] px-6 py-3",
             "font-mono text-[12px] font-medium uppercase tracking-[1px] text-black",
-            "transition-colors hover:bg-[#d4d6df]"
+            "transition-colors hover:bg-[#c8ccc6]"
           )}
         >
           <span>MENU</span>

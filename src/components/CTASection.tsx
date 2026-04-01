@@ -14,7 +14,7 @@ export function CTASection() {
   return (
     <section
       className={cn(
-        "bg-[#0016ec] text-white min-h-screen",
+        "bg-[#c63518] text-white min-h-screen",
         "flex flex-col items-center justify-center",
         "relative overflow-hidden"
       )}
@@ -35,12 +35,12 @@ export function CTASection() {
 
       {/* Tagline */}
       <p className="text-[12px] font-medium uppercase tracking-[2px] mb-6">
-        IS YOUR BIG IDEA READY TO GO WILD?
+        READY TO REACH THE PEAK?
       </p>
 
       {/* Main heading */}
       <h2 className="text-[min(8vw,100px)] font-light text-center leading-[1.1]">
-        Let&apos;s work together!
+        Let&apos;s build the future.
       </h2>
 
       {/* Confetti pattern */}
@@ -77,7 +77,7 @@ export function CTASection() {
           )}
         >
           <ArrowDown size={14} />
-          CONTINUE TO SCROLL
+          KEEP EXPLORING
           <ArrowDown size={14} />
         </button>
       </div>

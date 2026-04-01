@@ -68,14 +68,14 @@ function MarqueeRow({
 
 export function ClientsSection() {
   return (
-    <section className="overflow-hidden bg-black py-16 md:py-24">
+    <section className="overflow-hidden bg-[#0e1418] py-16 md:py-24">
       {/* Heading row */}
       <div className="mb-10 flex flex-col gap-4 px-6 md:mb-16 md:flex-row md:items-start md:justify-between md:px-[60px]">
         <h2 className="text-xl font-normal uppercase tracking-[2px] text-white md:text-[32px]">
-          BRANDS WE WORK WITH
+          TRUSTED PARTNERS
         </h2>
         <p className="max-w-[250px] text-[10px] font-medium uppercase tracking-[1px] text-white md:text-right">
-          TRUSTED BY GLOBAL BRANDS, CULTURAL INSTITUTIONS, AND FORWARD THINKING
+          POWERING AI SOLUTIONS FOR GLOBAL BRANDS AND FORWARD-THINKING
           TEAMS.
         </p>
       </div>

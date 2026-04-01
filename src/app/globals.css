@@ -7,17 +7,23 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans, "DM Sans", ui-sans-serif, system-ui, sans-serif);
+  --font-sans: var(--font-sans, "Nexa", ui-sans-serif, system-ui, sans-serif);
   --font-mono: var(--font-mono, "IBM Plex Mono", ui-monospace, monospace);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-display, "Nevera", var(--font-sans));
 
-  /* Lusion-specific colors */
-  --color-lusion-black: #000000;
-  --color-lusion-white: #ffffff;
-  --color-lusion-blue: #0016ec;
-  --color-lusion-dark-gray: #2b2e3a;
-  --color-lusion-light-gray: #e4e6ef;
-  --color-lusion-muted: rgba(255, 255, 255, 0.3);
+  /* NexApex brand colors */
+  --color-nex-background: #0e1418;
+  --color-nex-teal: #1a2630;
+  --color-nex-red: #c63518;
+  --color-nex-slate: #45596d;
+  --color-nex-cyan: #94fcff;
+  --color-nex-mauve: #b9afbb;
+  --color-nex-sage: #dfe4dc;
+  --color-nex-surface: #162029;
+  --color-nex-surface2: #1d2d39;
+  --color-nex-surface3: #253a49;
+  --color-nex-text: #c8ccc6;
+  --color-nex-dim: #6e7a84;
 
   /* shadcn tokens */
   --color-sidebar-ring: var(--sidebar-ring);
@@ -59,38 +65,38 @@
 }
 
 :root {
-  --background: #000000;
-  --foreground: #ffffff;
-  --card: #ffffff;
-  --card-foreground: #000000;
-  --popover: #000000;
-  --popover-foreground: #ffffff;
-  --primary: #ffffff;
-  --primary-foreground: #000000;
-  --secondary: #2b2e3a;
-  --secondary-foreground: #ffffff;
-  --muted: #2b2e3a;
-  --muted-foreground: rgba(255, 255, 255, 0.3);
-  --accent: #0016ec;
-  --accent-foreground: #ffffff;
+  --background: #0e1418;
+  --foreground: #f0f1ef;
+  --card: #162029;
+  --card-foreground: #f0f1ef;
+  --popover: #0e1418;
+  --popover-foreground: #f0f1ef;
+  --primary: #94fcff;
+  --primary-foreground: #0e1418;
+  --secondary: #45596d;
+  --secondary-foreground: #f0f1ef;
+  --muted: #1a2630;
+  --muted-foreground: #6e7a84;
+  --accent: #c63518;
+  --accent-foreground: #f0f1ef;
   --destructive: oklch(0.577 0.245 27.325);
-  --border: rgba(255, 255, 255, 0.1);
-  --input: rgba(255, 255, 255, 0.15);
-  --ring: rgba(255, 255, 255, 0.3);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --border: rgba(148, 252, 255, 0.08);
+  --input: rgba(148, 252, 255, 0.1);
+  --ring: rgba(148, 252, 255, 0.2);
+  --chart-1: #94fcff;
+  --chart-2: #c63518;
+  --chart-3: #45596d;
+  --chart-4: #b9afbb;
+  --chart-5: #1a2630;
   --radius: 0.625rem;
-  --sidebar: #000000;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: #000000;
-  --sidebar-accent: #2b2e3a;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: rgba(255, 255, 255, 0.3);
+  --sidebar: #0e1418;
+  --sidebar-foreground: #f0f1ef;
+  --sidebar-primary: #94fcff;
+  --sidebar-primary-foreground: #0e1418;
+  --sidebar-accent: #1a2630;
+  --sidebar-accent-foreground: #f0f1ef;
+  --sidebar-border: rgba(148, 252, 255, 0.08);
+  --sidebar-ring: rgba(148, 252, 255, 0.2);
 }
 
 @layer base {
@@ -105,7 +111,7 @@
   }
 }
 
-/* Lusion global styles */
+/* NexApex global styles */
 html, body {
   overflow: hidden;
   height: 100%;
@@ -126,7 +132,7 @@ html, body {
 .cross-marker::after {
   content: '';
   position: absolute;
-  background: white;
+  background: #94fcff;
 }
 
 .cross-marker::before {
@@ -155,7 +161,7 @@ html, body {
 
 .scroll-indicator-thumb {
   width: 100%;
-  background: white;
+  background: #94fcff;
   border-radius: 2px;
   transition: height 0.1s ease;
 }

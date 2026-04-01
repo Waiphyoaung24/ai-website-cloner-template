@@ -1,12 +1,22 @@
 import type { Metadata } from "next";
-import { DM_Sans, IBM_Plex_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const nevera = localFont({
+  src: "../../public/fonts/nevera-font/Nevera-Regular.otf",
+  variable: "--font-display",
+  display: "swap",
+});
+
+const nexa = localFont({
+  src: [
+    { path: "../../public/fonts/Nexa-Font/NexaLight.otf", weight: "300" },
+    { path: "../../public/fonts/Nexa-Font/NexaRegular.otf", weight: "400" },
+    { path: "../../public/fonts/Nexa-Font/NexaBold.otf", weight: "700" },
+  ],
   variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  style: ["normal", "italic"],
+  display: "swap",
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -16,8 +26,8 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lusion - About Us",
-  description: "We are Lusion, a creative production studio crafting unique digital experiences.",
+  title: "NexApex - Where AI Reaches Its Peak",
+  description: "NEX APEX is an AI tech solutions company driving businesses to the pinnacle of technological capability.",
 };
 
 export default function RootLayout({
@@ -28,9 +38,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${dmSans.variable} ${ibmPlexMono.variable} dark h-full antialiased`}
+      className={`${nevera.variable} ${nexa.variable} ${ibmPlexMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full bg-black text-white overflow-hidden">
+      <body className="min-h-full bg-[#0e1418] text-[#f0f1ef] overflow-hidden">
         {children}
       </body>
     </html>

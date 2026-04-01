@@ -20,44 +20,44 @@ const capabilities: Capability[] = [
     title: "Strategy",
     icon: "S",
     skills: [
-      "Digital Experience Strategy",
-      "Technology Strategy",
+      "AI Strategy & Roadmapping",
+      "Technology Consulting",
       "Creative Direction",
-      "Discovery",
-      "Research",
+      "Discovery & Research",
+      "Digital Transformation",
     ],
   },
   {
     title: "Creative",
     icon: "C",
     skills: [
-      "Art Direction",
+      "AI-Powered Design",
       "UX/UI Design",
       "Motion Design",
-      "Interactive Design",
-      "Illustration",
+      "Interactive Experiences",
+      "Brand Identity",
     ],
   },
   {
     title: "Tech",
     icon: "T",
     skills: [
-      "WebGL Development",
-      "Front End Development",
-      "Unity/Unreal",
-      "Interactive Installations",
-      "AR and VR Experiences",
+      "Machine Learning",
+      "Full Stack Development",
+      "WebGL & 3D",
+      "Cloud Infrastructure",
+      "AI Integration",
     ],
   },
   {
-    title: "Production",
-    icon: "P",
+    title: "Deployment",
+    icon: "D",
     skills: [
-      "Procedural Modeling",
-      "3D Asset Creation",
-      "3D Optimization",
-      "Animation",
-      "3D Pipeline Development",
+      "MLOps & Pipelines",
+      "Performance Optimization",
+      "Quality Assurance",
+      "Monitoring & Analytics",
+      "Continuous Delivery",
     ],
   },
 ];
@@ -217,21 +217,21 @@ export function CapabilitiesSection() {
     <section
       ref={sectionRef}
       className={cn(
-        "bg-[#0016ec] text-white py-16 px-5 min-h-screen",
+        "bg-[#c63518] text-white py-16 px-5 min-h-screen",
         "md:py-24 md:px-[60px]"
       )}
     >
       {/* Top area: heading left, description+buttons right */}
       <div className="flex flex-col gap-6 mb-10 md:flex-row md:justify-between md:items-start md:mb-16">
         <h2 className="capabilities-heading text-[clamp(2.5rem,10vw,120px)] font-normal uppercase leading-[0.9] text-white">
-          AREA OF
+          WHAT WE
           <br />
-          <span className="ml-[0.3em] md:ml-[0.5em]">EXPERTISE</span>
+          <span className="ml-[0.3em] md:ml-[0.5em]">DO</span>
         </h2>
         <div className="capabilities-desc max-w-[300px] md:max-w-[250px]">
           <p className="text-[11px] font-medium uppercase tracking-[1px]">
-            MULTIDISCIPLINARY EXPERTISE ACROSS STRATEGY, CREATIVE, TECHNOLOGY,
-            AND PRODUCTION.
+            AI-DRIVEN SOLUTIONS ACROSS STRATEGY, DESIGN, ENGINEERING,
+            AND DEPLOYMENT.
           </p>
           <div className="flex gap-2 mt-4">
             {categoryButtons.map((label) => (
