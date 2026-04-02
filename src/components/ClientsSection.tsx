@@ -10,64 +10,48 @@ if (typeof window !== "undefined") {
 }
 
 const row1 = [
-  { src: "/images/logos/logo--cocacola.svg", alt: "Coca-Cola" },
-  { src: "/images/logos/logo--nvidia.svg", alt: "NVIDIA" },
-  { src: "/images/logos/logo--google.svg", alt: "Google" },
-  { src: "/images/logos/logo--sony.svg", alt: "Sony" },
-  { src: "/images/logos/logo--porsche.svg", alt: "Porsche" },
-  { src: "/images/logos/logo--apple.svg", alt: "Apple" },
+  { src: "/images/logos/logo--python.svg", alt: "Python" },
+  { src: "/images/logos/logo--pytorch.svg", alt: "PyTorch" },
+  { src: "/images/logos/logo--tensorflow.svg", alt: "TensorFlow" },
+  { src: "/images/logos/logo--openai.svg", alt: "OpenAI" },
+  { src: "/images/logos/logo--flutter.svg", alt: "Flutter" },
+  { src: "/images/logos/logo--react.svg", alt: "React" },
 ];
 
 const row2 = [
-  { src: "/images/logos/logo--hyundai.svg", alt: "Hyundai" },
-  { src: "/images/logos/logo--awwwards.svg", alt: "Awwwards" },
-  { src: "/images/logos/logo--akqa.svg", alt: "AKQA" },
-  { src: "/images/logos/logo--stanford.svg", alt: "Stanford" },
-  { src: "/images/logos/logo--webby-awards.svg", alt: "Webby Awards" },
-  { src: "/images/logos/logo--maxmara.svg", alt: "Max Mara" },
+  { src: "/images/logos/logo--fastapi.svg", alt: "FastAPI" },
+  { src: "/images/logos/logo--postgresql.svg", alt: "PostgreSQL" },
+  { src: "/images/logos/logo--docker.svg", alt: "Docker" },
+  { src: "/images/logos/logo--vercel.svg", alt: "Vercel" },
+  { src: "/images/logos/logo--nextjs.svg", alt: "Next.js" },
+  { src: "/images/logos/logo--tailwindcss.svg", alt: "Tailwind CSS" },
 ];
 
-function MarqueeRow({ logos, direction, speed }: {
+function MarqueeRow({ logos, direction, duration }: {
   logos: typeof row1;
   direction: "left" | "right";
-  speed: number;
+  duration: number;
 }) {
-  const rowRef = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    const row = rowRef.current;
-    if (!row) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    // Each card set is 50% of the total width (since we duplicate)
-    const xEnd = direction === "left" ? "-50%" : "50%";
-    const xStart = direction === "left" ? "0%" : "-50%";
-
-    gsap.set(row, { x: xStart });
-    gsap.to(row, {
-      x: xEnd,
-      duration: speed,
-      ease: "none",
-      repeat: -1,
-    });
-  });
-
-  // Duplicate logos for seamless loop
-  const allLogos = [...logos, ...logos];
+  // Duplicate enough times to fill viewport + overflow
+  const allLogos = [...logos, ...logos, ...logos, ...logos];
 
   return (
     <div className="overflow-hidden">
-      <div ref={rowRef} className="flex w-max gap-4 md:gap-5">
+      <div
+        className="flex w-max gap-4 md:gap-5"
+        style={{
+          animation: `marquee-${direction} ${duration}s linear infinite`,
+        }}
+      >
         {allLogos.map((logo, i) => (
           <div
             key={`${logo.alt}-${i}`}
-            className="logo-card group flex items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.02] w-[160px] h-[100px] md:w-[220px] md:h-[130px] shrink-0 hover:border-[#94fcff]/15 hover:bg-white/[0.04] transition-all duration-300 cursor-pointer"
+            className="group flex items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.02] w-[160px] h-[100px] md:w-[220px] md:h-[130px] shrink-0 hover:border-[#94fcff]/15 hover:bg-white/[0.04] transition-all duration-300"
           >
             <img
               src={logo.src}
               alt={`${logo.alt} logo`}
-              className="max-h-[32px] md:max-h-[108px] w-auto opacity-60 group-hover:opacity-90 transition-opacity duration-300"
-              style={{ filter: "brightness(0) invert(1)" }}
+              className="max-h-[32px] md:max-h-[40px] w-auto opacity-60 group-hover:opacity-90 transition-opacity duration-300"
             />
           </div>
         ))}
@@ -105,23 +89,38 @@ export function ClientsSection() {
 
   return (
     <section ref={sectionRef} className="bg-[#0e1418] py-16 md:py-24 overflow-hidden">
+      {/* Marquee keyframes */}
+      <style>{`
+        @keyframes marquee-left {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        @keyframes marquee-right {
+          from { transform: translateX(-50%); }
+          to { transform: translateX(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .marquee-row { animation: none !important; }
+        }
+      `}</style>
+
       {/* Header row */}
       <div className="mb-10 md:mb-16 flex flex-col gap-4 px-5 md:flex-row md:items-start md:justify-between md:px-[60px]">
         <h2
           className="clients-heading font-normal uppercase tracking-[2px] text-white font-[family-name:var(--font-display)]"
           style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)" }}
         >
-          Trusted by Companies
+          Technologies We Work With
         </h2>
         <p className="clients-desc max-w-[280px] text-[10px] font-medium uppercase tracking-[1.5px] text-white/40 md:text-right leading-[1.8]">
-          Powering AI solutions for global brands and forward-thinking teams.
+          Production-grade tools powering our AI solutions across vision, language, and documents.
         </p>
       </div>
 
-      {/* Scrolling logo rows — GSAP-driven marquee */}
+      {/* Scrolling logo rows — CSS infinite marquee */}
       <div className="flex flex-col gap-4 md:gap-5">
-        <MarqueeRow logos={row1} direction="left" speed={30} />
-        <MarqueeRow logos={row2} direction="right" speed={35} />
+        <MarqueeRow logos={row1} direction="left" duration={30} />
+        <MarqueeRow logos={row2} direction="right" duration={35} />
       </div>
     </section>
   );

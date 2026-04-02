@@ -15,39 +15,25 @@ interface Project {
 
 const projects: Project[] = [
   {
-    title: "NexCore AI Engine",
-    description: "Enterprise-grade AI inference platform with sub-100ms latency.",
-    year: "2026",
-    link: "#",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=2670&auto=format&fit=crop",
-  },
-  {
-    title: "DataPulse Analytics",
-    description: "Real-time ML pipeline monitoring and anomaly detection.",
-    year: "2025",
-    link: "#",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop",
-  },
-  {
     title: "VisionForge",
-    description: "Computer vision toolkit for manufacturing quality control.",
-    year: "2025",
+    description: "Custom-trained object detection for quality control, inventory tracking, and defect inspection.",
+    year: "In Development",
     link: "#",
     image: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=2670&auto=format&fit=crop",
   },
   {
     title: "NexChat",
-    description: "Conversational AI platform with multi-language support.",
-    year: "2024",
+    description: "Multilingual AI assistants fine-tuned for your industry \u2014 English, Burmese, and Thai.",
+    year: "In Development",
     link: "#",
     image: "https://images.unsplash.com/photo-1676299081847-824916de030a?q=80&w=2670&auto=format&fit=crop",
   },
   {
-    title: "AutoML Studio",
-    description: "No-code machine learning model builder for business teams.",
-    year: "2024",
+    title: "DocStream",
+    description: "OCR-powered extraction pipeline that turns invoices, receipts, and contracts into structured data.",
+    year: "In Development",
     link: "#",
-    image: "https://images.unsplash.com/photo-1555949963-aa79dcee981c?q=80&w=2670&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2670&auto=format&fit=crop",
   },
 ]
 
@@ -113,7 +99,7 @@ export function ProjectShowcase() {
           </h2>
         </div>
         <p className="max-w-[280px] text-[11px] font-medium uppercase tracking-[1px] text-[#f0f1ef]/40 md:text-right">
-          AI solutions delivered for global enterprises and ambitious startups
+          AI products built in-house, deployed for businesses across Southeast Asia.
         </p>
       </div>
 

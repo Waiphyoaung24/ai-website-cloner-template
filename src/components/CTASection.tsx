@@ -1,132 +1,126 @@
 "use client";
 
-import { useRef, useEffect } from "react";
-import { ArrowDown } from "lucide-react";
+import { useRef } from "react";
+import { ArrowUpRight } from "lucide-react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 import { cn } from "@/lib/utils";
 
-const confettiPieces = Array.from({ length: 80 }, (_, i) => ({
-  char: ["\u2715", "\u25C7", "\u25BD", "\u25B7", "\u2022", "\u2726", "+", "\u25B3"][i % 8],
-  left: `${(i * 17 + 5) % 100}%`,
-  top: `${(i * 23 + 10) % 100}%`,
-  rotation: (i * 37) % 360,
-  size: 8 + (i % 6) * 2,
-  opacity: 0.3 + (i % 4) * 0.1,
-}));
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(useGSAP, ScrollTrigger, SplitText);
+}
 
 export function CTASection() {
-  const watermarkRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
 
-  useEffect(() => {
-    if (!watermarkRef.current) return;
-
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
+  useGSAP(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+    const scroller = document.querySelector("main");
+    if (!scroller) return;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) return;
 
-    const tween = gsap.to(watermarkRef.current, {
-      rotation: 360,
-      duration: 40,
-      repeat: -1,
-      ease: "none",
-    });
+    // Tagline fade in
+    const tagline = section.querySelector(".cta-tagline");
+    if (tagline) {
+      gsap.from(tagline, {
+        y: 20, autoAlpha: 0, duration: 0.6, ease: "power2.out",
+        scrollTrigger: { trigger: section, scroller, start: "top 60%", toggleActions: "play none none reverse" },
+      });
+    }
 
-    return () => {
-      tween.kill();
-    };
-  }, []);
+    // Heading — word-by-word reveal
+    const heading = section.querySelector(".cta-heading");
+    if (heading) {
+      const split = SplitText.create(heading, { type: "words" });
+      gsap.from(split.words, {
+        y: 60, autoAlpha: 0, rotateX: -40, stagger: 0.06, duration: 0.8, ease: "power4.out",
+        scrollTrigger: { trigger: section, scroller, start: "top 55%", toggleActions: "play none none reverse" },
+      });
+    }
+
+    // CTA button entrance
+    const cta = section.querySelector(".cta-button");
+    if (cta) {
+      gsap.from(cta, {
+        y: 30, autoAlpha: 0, duration: 0.6, delay: 0.4, ease: "power3.out",
+        scrollTrigger: { trigger: section, scroller, start: "top 55%", toggleActions: "play none none reverse" },
+      });
+    }
+
+    // Divider line draw
+    const line = section.querySelector(".cta-divider");
+    if (line) {
+      gsap.from(line, {
+        scaleX: 0, transformOrigin: "center center", duration: 1.2, ease: "power2.inOut",
+        scrollTrigger: { trigger: section, scroller, start: "top 65%", toggleActions: "play none none reverse" },
+      });
+    }
+  }, { scope: sectionRef });
 
   return (
     <section
+      ref={sectionRef}
       className={cn(
-        "bg-[#c63518] text-white min-h-screen",
-        "flex flex-col items-center justify-center",
-        "relative overflow-hidden"
+        "relative overflow-hidden",
+        "bg-[#0e1418] text-white",
+        "py-32 px-5 md:py-48 md:px-[60px]",
+        "flex flex-col items-center justify-center"
       )}
     >
-      {/* Rotating logo watermark */}
+      {/* Subtle background glow */}
       <div
-        ref={watermarkRef}
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-      >
-        {/* SVG export is broken (empty file) — use PNG instead */}
-        <img
-          src="/images/Black_outline.png"
-          alt=""
-          width={600}
-          height={600}
-          className="w-[300px] h-[300px] md:w-[600px] md:h-[600px] opacity-[0.06] invert"
-        />
-      </div>
+        aria-hidden="true"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{
+          background: "radial-gradient(circle, rgba(148,252,255,0.04) 0%, transparent 70%)",
+        }}
+      />
 
-      {/* Cross markers */}
-      <div
-        className="absolute top-[120px] left-[20%] text-white/50 text-xl font-light select-none"
-        aria-hidden="true"
-      >
-        +
-      </div>
-      <div
-        className="absolute top-[120px] right-[20%] text-white/50 text-xl font-light select-none"
-        aria-hidden="true"
-      >
-        +
-      </div>
+      {/* Top divider */}
+      <div className="cta-divider h-px w-24 bg-[#94fcff]/30 mb-12" />
 
       {/* Tagline */}
-      <p className="text-[12px] font-medium uppercase tracking-[2px] mb-6">
-        READY TO REACH THE PEAK?
+      <p className="cta-tagline text-[11px] font-mono uppercase tracking-[4px] text-[#94fcff]/60 mb-6">
+        Ready to see AI in action?
       </p>
 
       {/* Main heading */}
-      <h2 className="text-[min(8vw,100px)] font-light text-center leading-[1.1]">
-        Let&apos;s build the future.
+      <h2
+        className="cta-heading font-[family-name:var(--font-display)] uppercase text-center leading-[0.95] tracking-[-0.01em]"
+        style={{
+          fontSize: "clamp(2.5rem, 8vw, 7rem)",
+          background: "linear-gradient(180deg, #ffffff 0%, #e8eae7 30%, #d4eef0 65%, #a0dfe4 100%)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}
+      >
+        Let&apos;s build<br />something real.
       </h2>
 
-      {/* Confetti pattern */}
-      <div
-        className="absolute bottom-0 left-0 right-0 h-[50%] pointer-events-none"
-        aria-hidden="true"
+      {/* Primary CTA */}
+      <a
+        href="mailto:business@nexapex.co"
+        className={cn(
+          "cta-button mt-12 z-10 group",
+          "flex items-center gap-3",
+          "rounded-full border border-[#94fcff]/30 px-8 py-4",
+          "font-mono text-[12px] font-medium uppercase tracking-[1px] text-[#94fcff]",
+          "cursor-pointer transition-all duration-300 ease-out",
+          "hover:bg-[#94fcff]/10 hover:border-[#94fcff]/50 hover:shadow-[0_0_30px_rgba(148,252,255,0.1)]",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#94fcff]"
+        )}
       >
-        {confettiPieces.map((piece, i) => (
-          <span
-            key={i}
-            className="absolute select-none"
-            style={{
-              left: piece.left,
-              top: piece.top,
-              transform: `rotate(${piece.rotation}deg)`,
-              fontSize: `${piece.size}px`,
-              opacity: piece.opacity,
-            }}
-          >
-            {piece.char}
-          </span>
-        ))}
-      </div>
+        Book a Consultation
+        <ArrowUpRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+      </a>
 
-      {/* Scroll button */}
-      <div className="absolute bottom-16 z-10">
-        <button
-          type="button"
-          aria-label="Keep exploring — scroll down"
-          className={cn(
-            "flex items-center gap-3",
-            "px-6 py-3 rounded-full",
-            "bg-white/90 text-black",
-            "text-[11px] font-medium uppercase tracking-[1px]",
-            "cursor-pointer transition-all duration-200 ease-out",
-            "hover:bg-white hover:shadow-lg hover:scale-105",
-            "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-          )}
-        >
-          <ArrowDown size={14} />
-          KEEP EXPLORING
-          <ArrowDown size={14} />
-        </button>
-      </div>
+      {/* Bottom divider */}
+      <div className="h-px w-24 bg-[#94fcff]/30 mt-12" />
     </section>
   );
 }

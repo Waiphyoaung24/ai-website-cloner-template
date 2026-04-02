@@ -19,14 +19,14 @@ export default function Home() {
       <main className="h-screen overflow-y-auto overflow-x-hidden">
         <HeroSection />
      
-        <ThreeShowcase />
-        <BrandSection />
-        <ClientsSection />
-        <div className="bg-[#0e1418]">
+        <div id="three-showcase"><ThreeShowcase /></div>
+        <div id="brand-section"><BrandSection /></div>
+        <div id="clients-section"><ClientsSection /></div>
+        <div id="project-showcase" className="bg-[#0e1418]">
           <ProjectShowcase />
         </div>
-        <CapabilitiesSection />
-        <CTASection />
+        <div id="capabilities-section"><CapabilitiesSection /></div>
+        <div id="cta-section"><CTASection /></div>
         <FooterSection />
       </main>
     </>

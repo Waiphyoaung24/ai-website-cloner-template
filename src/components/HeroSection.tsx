@@ -106,6 +106,15 @@ export function HeroSection({ className }: { className?: string }) {
         type: "chars",
       });
 
+      // Apply gradient to each char after SplitText wraps them
+      split.chars.forEach((char) => {
+        const el = char as HTMLElement;
+        el.style.background = "linear-gradient(180deg, #ffffff 0%, #e8eae7 30%, #d4eef0 65%, #a0dfe4 100%)";
+        (el.style as unknown as Record<string, string>).webkitBackgroundClip = "text";
+        (el.style as unknown as Record<string, string>).webkitTextFillColor = "transparent";
+        el.style.backgroundClip = "text";
+      });
+
       gsap.from(split.chars, {
         y: 80,
         autoAlpha: 0,
@@ -192,7 +201,10 @@ export function HeroSection({ className }: { className?: string }) {
       <div className="hero-title pointer-events-none absolute inset-x-0 bottom-0 z-10 overflow-hidden px-4 pb-4 md:px-[60px] md:pb-8">
         <h1
           className="select-none text-center font-normal uppercase leading-[0.85] tracking-[-0.02em] text-white"
-          style={{ fontSize: "clamp(3rem, 12vw, 180px)", fontFamily: "var(--font-display)" }}
+          style={{
+            fontSize: "clamp(3rem, 12vw, 180px)",
+            fontFamily: "var(--font-display)",
+          }}
         >
           NEX APEX
         </h1>

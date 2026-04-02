@@ -133,9 +133,9 @@ function Scene() {
         <SpaceStationModel />
 
         {/* Annotation hotspots on the model */}
-        <Annotation position={[2, 2, 0]} label="AI Engine" detail="Multi-model inference pipeline" active={phase >= 1} />
-        <Annotation position={[-3, 1, 2]} label="Edge Nodes" detail="Distributed compute clusters" active={phase >= 2} />
-        <Annotation position={[0, 4, -2]} label="Data Mesh" detail="Real-time sync network" active={phase >= 3} />
+        <Annotation position={[2, 2, 0]} label="Vision Engine" detail="Real-time detection pipeline" active={phase >= 1} />
+        <Annotation position={[-3, 1, 2]} label="Language Core" detail="Multilingual AI assistant" active={phase >= 2} />
+        <Annotation position={[0, 4, -2]} label="Doc Processor" detail="OCR + extraction pipeline" active={phase >= 3} />
       </Suspense>
 
       <Environment preset="night" />
@@ -148,24 +148,24 @@ function Scene() {
 /* ── Brand content panels — appear at different scroll phases ── */
 const brandPanels = [
   {
-    title: "Where AI Reaches\nIts Peak",
+    title: "Where AI Meets\nBusiness",
     subtitle: "NEX APEX",
-    body: "We architect AI-native systems that push the boundary of what technology can achieve. From concept to deployment, we build what others haven't imagined yet.",
+    body: "We build AI that works in the real world \u2014 not just in research papers. From computer vision to document processing, our solutions ship fast and deliver measurable results.",
   },
   {
-    title: "Intelligent\nInfrastructure",
-    subtitle: "AI ENGINEERING",
-    body: "Production-grade ML pipelines with sub-100ms inference. We design, train, and deploy multi-modal AI systems that scale from prototype to millions of daily requests.",
+    title: "Eyes That\nNever Blink",
+    subtitle: "COMPUTER VISION",
+    body: "Object detection, defect inspection, inventory counting \u2014 our vision systems run on any camera, any device. Trained on your products, deployed where you need them.",
   },
   {
-    title: "Edge-First\nArchitecture",
-    subtitle: "CLOUD & COMPUTE",
-    body: "Distributed compute across global edge nodes. Our infrastructure adapts in real-time, routing intelligence to where it's needed with 99.97% uptime.",
+    title: "Your Business,\nIts Language",
+    subtitle: "AI ASSISTANTS",
+    body: "Custom-trained AI assistants that know your industry, speak your customers\u2019 language \u2014 English, Burmese, or Thai \u2014 and handle enquiries 24/7 without breaking a sweat.",
   },
   {
-    title: "Data-Driven\nProducts",
-    subtitle: "PRODUCT INTELLIGENCE",
-    body: "We transform raw data into competitive advantage. AI-powered features that learn, adapt, and deliver measurable business outcomes across every touchpoint.",
+    title: "Paper to Data\nin Seconds",
+    subtitle: "DOCUMENT INTELLIGENCE",
+    body: "Upload an invoice, scan a receipt, photograph a contract. Our extraction pipeline pulls structured data from any document and feeds it straight into your workflow.",
   },
 ];
 
@@ -293,7 +293,7 @@ export function ThreeShowcase() {
           className="font-normal uppercase tracking-[3px] text-white font-[family-name:var(--font-display)] text-center leading-[1.1]"
           style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
         >
-          What Drives Our Core
+          What We Build
         </h2>
         <div className="mt-6 h-px w-16 bg-[#94fcff]/30" />
       </div>

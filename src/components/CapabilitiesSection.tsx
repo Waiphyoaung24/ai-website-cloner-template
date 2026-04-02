@@ -17,52 +17,52 @@ interface Capability {
 
 const capabilities: Capability[] = [
   {
-    title: "Strategy",
-    icon: "S",
+    title: "Vision",
+    icon: "V",
     skills: [
-      "AI Strategy & Roadmapping",
-      "Technology Consulting",
-      "Creative Direction",
-      "Discovery & Research",
-      "Digital Transformation",
+      "Object Detection & Classification",
+      "Quality Control & Inspection",
+      "Inventory & Asset Tracking",
+      "Real-Time Camera Analytics",
+      "Custom Model Training",
     ],
   },
   {
-    title: "Creative",
-    icon: "C",
+    title: "Language",
+    icon: "L",
     skills: [
-      "AI-Powered Design",
-      "UX/UI Design",
-      "Motion Design",
-      "Interactive Experiences",
-      "Brand Identity",
+      "Custom AI Assistants",
+      "Multilingual Chat (EN/MY/TH)",
+      "Business Process Automation",
+      "Knowledge Base Integration",
+      "Fine-Tuned LLM Deployment",
     ],
   },
   {
-    title: "Tech",
-    icon: "T",
-    skills: [
-      "Machine Learning",
-      "Full Stack Development",
-      "WebGL & 3D",
-      "Cloud Infrastructure",
-      "AI Integration",
-    ],
-  },
-  {
-    title: "Deployment",
+    title: "Documents",
     icon: "D",
     skills: [
-      "MLOps & Pipelines",
-      "Performance Optimization",
-      "Quality Assurance",
-      "Monitoring & Analytics",
-      "Continuous Delivery",
+      "OCR & Text Extraction",
+      "Invoice & Receipt Processing",
+      "Contract Data Mining",
+      "Structured Data Export",
+      "Multi-Format Support",
+    ],
+  },
+  {
+    title: "Delivery",
+    icon: "\u2192",
+    skills: [
+      "End-to-End Development",
+      "Mobile & Web Deployment",
+      "API Integration",
+      "Model Monitoring & Retraining",
+      "Ongoing Support & Maintenance",
     ],
   },
 ];
 
-const categoryButtons = ["s", "c", "t", "3"];
+const categoryButtons = ["v", "l", "d", "\u2192"];
 
 function CapabilityCard({
   capability,
@@ -223,25 +223,24 @@ export function CapabilitiesSection() {
     >
       {/* Top area: heading left, description+buttons right */}
       <div className="flex flex-col gap-6 mb-10 md:flex-row md:justify-between md:items-start md:mb-16">
-        <h2 className="capabilities-heading text-[clamp(2.5rem,10vw,120px)] font-normal uppercase leading-[0.9] text-white">
+        <h2 className="capabilities-heading text-[clamp(2.5rem,10vw,120px)] font-normal uppercase leading-[0.9] text-white font-[family-name:var(--font-display)]">
           WHAT WE
           <br />
           <span className="ml-[0.3em] md:ml-[0.5em]">DO</span>
         </h2>
         <div className="capabilities-desc max-w-[300px] md:max-w-[250px]">
           <p className="text-[11px] font-medium uppercase tracking-[1px]">
-            AI-DRIVEN SOLUTIONS ACROSS STRATEGY, DESIGN, ENGINEERING,
-            AND DEPLOYMENT.
+            AI SOLUTIONS THAT SHIP &mdash; FROM PROTOTYPE TO PRODUCTION,
+            BUILT FOR REAL BUSINESSES.
           </p>
           <div className="flex gap-2 mt-4">
             {categoryButtons.map((label) => (
-              <button
+              <span
                 key={label}
-                type="button"
-                className="cat-btn w-8 h-8 border border-white/30 rounded text-[12px] font-mono flex items-center justify-center cursor-pointer transition-colors duration-200 hover:bg-white/10"
+                className="cat-btn w-8 h-8 border border-white/30 rounded text-[12px] font-mono flex items-center justify-center"
               >
                 {label}
-              </button>
+              </span>
             ))}
           </div>
         </div>
