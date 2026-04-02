@@ -223,7 +223,15 @@ export function CapabilitiesSection() {
     >
       {/* Top area: heading left, description+buttons right */}
       <div className="flex flex-col gap-6 mb-10 md:flex-row md:justify-between md:items-start md:mb-16">
-        <h2 className="capabilities-heading text-[clamp(2.5rem,10vw,120px)] font-normal uppercase leading-[0.9] text-white font-[family-name:var(--font-display)]">
+        <h2
+          className="capabilities-heading text-[clamp(2.5rem,10vw,120px)] font-normal uppercase leading-[0.9] font-[family-name:var(--font-display)]"
+          style={{
+            background: "linear-gradient(180deg, #ffffff 0%, #e8eae7 30%, #d4eef0 65%, #a0dfe4 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            backgroundClip: "text",
+          }}
+        >
           WHAT WE
           <br />
           <span className="ml-[0.3em] md:ml-[0.5em]">DO</span>

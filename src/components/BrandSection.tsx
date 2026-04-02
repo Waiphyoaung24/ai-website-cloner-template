@@ -63,6 +63,16 @@ export function BrandSection() {
     const statementTitle = section.querySelector(".brand-statement");
     if (statementTitle) {
       const split = SplitText.create(statementTitle, { type: "lines, words" });
+
+      // Apply gradient to each word after SplitText wraps them
+      split.words.forEach((word) => {
+        const el = word as HTMLElement;
+        el.style.background = "linear-gradient(180deg, #ffffff 0%, #e8eae7 30%, #d4eef0 65%, #a0dfe4 100%)";
+        (el.style as unknown as Record<string, string>).webkitBackgroundClip = "text";
+        (el.style as unknown as Record<string, string>).webkitTextFillColor = "transparent";
+        el.style.backgroundClip = "text";
+      });
+
       gsap.from(split.words, {
         y: 50,
         autoAlpha: 0,

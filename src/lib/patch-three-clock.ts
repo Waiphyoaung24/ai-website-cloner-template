@@ -6,7 +6,7 @@
 if (typeof window !== "undefined") {
   const origWarn = console.warn.bind(console);
   console.warn = (...args: unknown[]) => {
-    if (typeof args[0] === "string" && args[0].includes("THREE.Clock")) return;
+    if (typeof args[0] === "string" && (args[0].includes("THREE.Clock") || args[0].includes("PCFSoftShadowMap"))) return;
     origWarn(...args);
   };
 }
