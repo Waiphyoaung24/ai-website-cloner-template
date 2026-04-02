@@ -174,6 +174,7 @@ export function ThreeShowcase() {
   const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
   const fadeOverlayRef = useRef<HTMLDivElement>(null);
   const canvasWrapRef = useRef<HTMLDivElement>(null);
+  const sectionHeaderRef = useRef<HTMLDivElement>(null);
   const [activePanel, setActivePanel] = useState(0);
 
   const onScrollProgress = useCallback((p: number) => {
@@ -210,6 +211,14 @@ export function ThreeShowcase() {
         duration: 0.12,
         ease: "power3.inOut",
       }, 0);
+    }
+
+    // Section header — visible before 3D, fades out as canvas reveals
+    const headerEl = sectionHeaderRef.current;
+    if (headerEl) {
+      tl.to(headerEl, {
+        autoAlpha: 0, scale: 0.95, duration: 0.1, ease: "power2.in",
+      }, 0.02);
     }
 
     // Animate each brand panel in sequence
@@ -271,6 +280,23 @@ export function ThreeShowcase() {
         style={{ background: "linear-gradient(to bottom, #0e1418, transparent)" }} />
       <div className="absolute bottom-0 left-0 right-0 h-32 z-10 pointer-events-none"
         style={{ background: "linear-gradient(to top, #0e1418, transparent)" }} />
+
+      {/* Centered section header — visible before 3D reveal, fades out on scroll */}
+      <div
+        ref={sectionHeaderRef}
+        className="absolute inset-0 z-[25] flex flex-col items-center justify-center pointer-events-none"
+      >
+        <p className="text-[10px] font-mono uppercase tracking-[4px] text-[#94fcff]/50 mb-4">
+          Explore
+        </p>
+        <h2
+          className="font-normal uppercase tracking-[3px] text-white font-[family-name:var(--font-display)] text-center leading-[1.1]"
+          style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+        >
+          What Drives Our Core
+        </h2>
+        <div className="mt-6 h-px w-16 bg-[#94fcff]/30" />
+      </div>
 
       {/* Brand content panels — stacked, revealed by scroll */}
       <div className="absolute inset-0 z-20 pointer-events-none">

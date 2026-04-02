@@ -63,7 +63,7 @@ export function FooterSection() {
   return (
     <footer
       ref={footerRef}
-      className="relative bg-[#dfe4dc] text-[#0e1418] py-16 px-5 md:py-24 md:px-[60px]"
+      className="relative bg-[#dfe4dc] text-[#0e1418] py-10 px-5 md:py-14 md:px-[60px]"
     >
       {/* Main grid */}
       <div className="grid grid-cols-1 gap-10 mb-14 sm:grid-cols-2 md:grid-cols-3 md:gap-10 md:mb-20">
@@ -136,12 +136,12 @@ export function FooterSection() {
           </div>
         </div>
 
-        {/* Column 3: Newsletter */}
+        {/* Column 3: Newsletter + Back to top */}
         <div className="sm:col-span-2 md:col-span-1">
           <h3 className="text-[28px] md:text-[36px] font-normal font-[family-name:var(--font-display)] leading-tight mb-6 md:mb-8">
             Subscribe to our newsletter
           </h3>
-          <div className="relative">
+          <div className="relative mb-6">
             <label htmlFor="footer-email" className="sr-only">
               Your email address
             </label>
@@ -159,36 +159,24 @@ export function FooterSection() {
               <ArrowRight size={20} className="text-[#94fcff]" />
             </button>
           </div>
+          <button
+            ref={backToTopRef}
+            type="button"
+            onClick={scrollToTop}
+            className="w-12 h-12 rounded-full bg-[#0e1418] text-white flex items-center justify-center cursor-pointer transition-all duration-200 ease-out hover:bg-[#0e1418]/80 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0e1418]"
+            aria-label="Back to top"
+          >
+            <ArrowUp size={20} />
+          </button>
         </div>
       </div>
 
       {/* Copyright Bar */}
       <div className="flex flex-col gap-2 pt-8 border-t border-[#0e1418]/10 text-[12px] text-[#0e1418]/50 sm:flex-row sm:justify-between sm:items-center sm:pt-10">
         <span>&copy;2026 NEX APEX</span>
-        <span>
-          AI Lab:{" "}
-          <a
-            href="https://labs.nexapex.co"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="cursor-pointer hover:opacity-60 transition-opacity duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0e1418]"
-          >
-            labs.nexapex.co
-          </a>
-        </span>
         <span>Built by NexApex with love</span>
       </div>
 
-      {/* Back-to-top Button */}
-      <button
-        ref={backToTopRef}
-        type="button"
-        onClick={scrollToTop}
-        className="absolute bottom-6 right-5 w-12 h-12 rounded-full bg-[#0e1418] text-white flex items-center justify-center cursor-pointer transition-all duration-200 ease-out hover:bg-[#0e1418]/80 hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#0e1418] md:right-10"
-        aria-label="Back to top"
-      >
-        <ArrowUp size={20} />
-      </button>
     </footer>
   );
 }

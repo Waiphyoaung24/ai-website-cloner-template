@@ -28,13 +28,6 @@ const PILLARS = [
   },
 ];
 
-const METRICS = [
-  { value: "10M+", label: "Daily AI Requests" },
-  { value: "99.97%", label: "Uptime SLA" },
-  { value: "<100ms", label: "Inference Latency" },
-  { value: "6", label: "Continents Covered" },
-];
-
 export function BrandSection() {
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -45,6 +38,17 @@ export function BrandSection() {
     if (!scroller) return;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduceMotion) return;
+
+    // Section headline — SplitText char reveal (same as ThreeShowcase)
+    const headlineTitle = section.querySelector(".section-headline-title");
+    const headlineWrap = section.querySelector(".section-headline");
+    if (headlineTitle) {
+      const split = SplitText.create(headlineTitle, { type: "chars" });
+      gsap.from(split.chars, {
+        y: 40, autoAlpha: 0, rotateX: -60, stagger: 0.03, duration: 0.8, ease: "power4.out",
+        scrollTrigger: { trigger: headlineWrap, scroller, start: "top 80%", toggleActions: "play none none reverse" },
+      });
+    }
 
     // Statement reveal
     const statementTitle = section.querySelector(".brand-statement");
@@ -100,24 +104,6 @@ export function BrandSection() {
       });
     });
 
-    // Metrics counter
-    const metrics = section.querySelectorAll(".metric-item");
-    metrics.forEach((item, i) => {
-      gsap.from(item, {
-        y: 40,
-        autoAlpha: 0,
-        duration: 0.6,
-        delay: i * 0.1,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: item,
-          scroller,
-          start: "top 90%",
-          toggleActions: "play none none reverse",
-        },
-      });
-    });
-
     // Divider line draw
     const dividers = section.querySelectorAll(".brand-divider");
     dividers.forEach((line) => {
@@ -139,16 +125,27 @@ export function BrandSection() {
   return (
     <section ref={sectionRef} className="relative bg-[#0e1418] overflow-hidden">
 
+      {/* ── Section Headline — centered, same style as ThreeShowcase ── */}
+      <div className="section-headline flex flex-col items-center justify-center py-24 md:py-36 pointer-events-none">
+        <p className="text-[10px] font-mono uppercase tracking-[4px] text-[#94fcff]/50 mb-4">
+          Discover
+        </p>
+        <h2
+          className="section-headline-title font-normal uppercase tracking-[3px] text-white text-center leading-[1.1] font-[family-name:var(--font-display)]"
+          style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
+        >
+          Who We Are
+        </h2>
+        <div className="mt-6 h-px w-16 bg-[#94fcff]/30" />
+      </div>
+
       {/* ── 1. Brand Statement ── */}
-      <div className="px-5 md:px-[60px] pt-24 md:pt-40 pb-16 md:pb-24">
+      <div className="px-5 md:px-[60px] pb-16 md:pb-24">
         <div className="brand-divider h-px bg-gradient-to-r from-[#94fcff]/30 via-[#94fcff]/10 to-transparent mb-16 md:mb-24" />
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-16">
           {/* Left — large statement */}
           <div className="md:col-span-7">
-            <p className="text-[11px] font-medium uppercase tracking-[3px] text-[#94fcff]/50 mb-6 font-mono">
-              Who We Are
-            </p>
             <h2
               className="brand-statement font-normal uppercase leading-[0.92] tracking-[-0.01em] text-white font-[family-name:var(--font-display)]"
               style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
@@ -203,29 +200,6 @@ export function BrandSection() {
         </div>
       </div>
 
-      {/* ── 3. Key Metrics ── */}
-      <div className="px-5 md:px-[60px] pb-24 md:pb-40">
-        <div className="brand-divider h-px bg-gradient-to-r from-[#94fcff]/30 via-[#94fcff]/10 to-transparent mb-12 md:mb-16" />
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0">
-          {METRICS.map((metric) => (
-            <div
-              key={metric.label}
-              className="metric-item md:border-l md:border-[#94fcff]/10 md:first:border-l-0 md:pl-8 md:first:pl-0"
-            >
-              <span
-                className="block font-[family-name:var(--font-display)] text-white uppercase tracking-[-0.02em] mb-2"
-                style={{ fontSize: "clamp(1.5rem, 3vw, 3rem)" }}
-              >
-                {metric.value}
-              </span>
-              <span className="text-[11px] font-mono uppercase tracking-[2px] text-white/30">
-                {metric.label}
-              </span>
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
