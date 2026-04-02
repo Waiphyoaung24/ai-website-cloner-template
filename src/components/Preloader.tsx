@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useState, useCallback } from "react";
-import Image from "next/image";
-import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import Image from "next/image";
+import { useCallback, useRef, useState } from "react";
 
 gsap.registerPlugin(useGSAP);
 
@@ -25,14 +25,14 @@ function DigitRoller({ value }: { value: number }) {
     <div
       ref={wrapRef}
       className="relative overflow-hidden"
-      style={{ width: "1ch", height: "0.75em", lineHeight: "0.75em" }}
+      style={{ width: "1ch", height: "1em", lineHeight: "1em" }}
     >
-      <div ref={colRef} style={{ transform: "translateY(-0.03em)" }}>
+      <div ref={colRef}>
         {Array.from({ length: 10 }, (_, i) => (
           <div
             key={i}
             className="text-center"
-            style={{ height: "0.75em", lineHeight: "0.75em" }}
+            style={{ height: "1em", lineHeight: "1em" }}
           >
             {i}
           </div>
@@ -144,11 +144,10 @@ export function Preloader() {
       {/* Counter digits */}
       <div
         ref={digitsRef}
-        className="absolute bottom-0 left-0 flex pl-2 md:pl-0 font-sans font-light tracking-[-0.02em] text-white"
+        className="absolute bottom-2 md:bottom-6 left-2 md:left-6 flex font-sans font-light tracking-[-0.02em] text-white"
         style={{
-          fontSize: "clamp(4rem, 15vw, 20rem)",
-          height: "0.75em",
-          lineHeight: "0.75em",
+          fontSize: "clamp(2rem, 6vw, 5rem)",
+          lineHeight: 1,
           overflow: "hidden",
         }}
       >
