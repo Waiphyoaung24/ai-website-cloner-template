@@ -4,7 +4,7 @@ import "@/lib/patch-three-clock";
 import * as THREE from "three";
 import { Suspense, useRef, useState, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, OrbitControls, Html } from "@react-three/drei";
+import { Environment, Html } from "@react-three/drei";
 import { SpaceStationModel } from "./SpaceStation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
@@ -44,69 +44,64 @@ function Annotation({ position, label, detail, active }: {
   );
 }
 
-/* ── Scroll-driven camera controller ── */
+/* ── Scroll-locked camera — no user rotation, purely scroll-driven with smooth lerp ── */
+const VIEWS = [
+  { pos: [3, 1.5, 3],   target: [0, 0.5, 0],  fov: 42 },  // 0%:   tight, immersive
+  { pos: [5, 2, 5],     target: [0, 0.5, 0],  fov: 48 },  // 25%:  pulling back
+  { pos: [-6, 4, 5],    target: [0, 0, -1],   fov: 52 },  // 50%:  side angle, further
+  { pos: [0, 10, 0.1],  target: [0, 0, 0],    fov: 55 },  // 75%:  bird's eye
+  { pos: [16, 8, 16],   target: [0, 0, 0],    fov: 62 },  // 100%: dramatic wide pullout
+];
+
 function CameraController() {
   const { camera } = useThree();
-  const controlsRef = useRef<{ target: THREE.Vector3; update: () => void }>(null);
+  const currentLookAt = useRef(new THREE.Vector3(0, 0, 0));
+  const targetPos = useRef(new THREE.Vector3(3, 1.5, 3));
+  const targetLookAt = useRef(new THREE.Vector3(0, 0, 0));
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     const t = clock.getElapsedTime();
     const p = scrollState.progress;
 
-    // 5 camera keyframes driven by scroll progress
-    const views = [
-      { pos: [8, 3, 8], target: [0, 0, 0], fov: 60 },      // 0%: wide establishing
-      { pos: [3, 1, 5], target: [0, 1, 0], fov: 50 },       // 25%: close-up module
-      { pos: [-5, 4, 3], target: [0, 0, -1], fov: 55 },     // 50%: side angle
-      { pos: [0, 8, 0.1], target: [0, 0, 0], fov: 45 },     // 75%: top-down
-      { pos: [12, 5, 12], target: [0, 0, 0], fov: 40 },     // 100%: pull-out
-    ];
-
     // Determine which two keyframes we're between
-    const segment = Math.min(p * (views.length - 1), views.length - 1.001);
+    const segment = Math.min(p * (VIEWS.length - 1), VIEWS.length - 1.001);
     const i = Math.floor(segment);
     const f = segment - i;
-    const from = views[i];
-    const to = views[Math.min(i + 1, views.length - 1)];
+    const from = VIEWS[i];
+    const to = VIEWS[Math.min(i + 1, VIEWS.length - 1)];
 
-    // Smooth interpolation between keyframes
-    const ease = f * f * (3 - 2 * f); // smoothstep
-    const px = from.pos[0] + (to.pos[0] - from.pos[0]) * ease;
-    const py = from.pos[1] + (to.pos[1] - from.pos[1]) * ease;
-    const pz = from.pos[2] + (to.pos[2] - from.pos[2]) * ease;
+    // Smoothstep interpolation
+    const ease = f * f * (3 - 2 * f);
 
-    // Add subtle float
-    const fx = Math.sin(t * 0.3) * 0.3;
-    const fy = Math.cos(t * 0.2) * 0.15;
+    // Compute target position + subtle organic float
+    const fx = Math.sin(t * 0.3) * 0.15;
+    const fy = Math.cos(t * 0.2) * 0.08;
+    targetPos.current.set(
+      from.pos[0] + (to.pos[0] - from.pos[0]) * ease + fx,
+      from.pos[1] + (to.pos[1] - from.pos[1]) * ease + fy,
+      from.pos[2] + (to.pos[2] - from.pos[2]) * ease,
+    );
+    targetLookAt.current.set(
+      from.target[0] + (to.target[0] - from.target[0]) * ease,
+      from.target[1] + (to.target[1] - from.target[1]) * ease,
+      from.target[2] + (to.target[2] - from.target[2]) * ease,
+    );
 
-    camera.position.set(px + fx, py + fy, pz);
+    // Frame-rate-independent smooth lerp (higher = snappier, ~4 feels cinematic)
+    const lerpFactor = 1 - Math.exp(-4 * delta);
 
-    const tx = from.target[0] + (to.target[0] - from.target[0]) * ease;
-    const ty = from.target[1] + (to.target[1] - from.target[1]) * ease;
-    const tz = from.target[2] + (to.target[2] - from.target[2]) * ease;
-    camera.lookAt(tx, ty, tz);
+    camera.position.lerp(targetPos.current, lerpFactor);
+    currentLookAt.current.lerp(targetLookAt.current, lerpFactor);
+    camera.lookAt(currentLookAt.current);
 
-    const fov = from.fov + (to.fov - from.fov) * ease;
-    (camera as THREE.PerspectiveCamera).fov = fov;
-    (camera as THREE.PerspectiveCamera).updateProjectionMatrix();
-
-    if (controlsRef.current) {
-      controlsRef.current.target.set(tx, ty, tz);
-      controlsRef.current.update();
-    }
+    // Smooth FOV transition
+    const cam = camera as THREE.PerspectiveCamera;
+    const targetFov = from.fov + (to.fov - from.fov) * ease;
+    cam.fov += (targetFov - cam.fov) * lerpFactor;
+    cam.updateProjectionMatrix();
   });
 
-  return (
-    <OrbitControls
-      ref={controlsRef as React.Ref<never>}
-      enableDamping
-      dampingFactor={0.05}
-      enableZoom={false}
-      enablePan={false}
-      minPolarAngle={Math.PI / 6}
-      maxPolarAngle={Math.PI / 2}
-    />
-  );
+  return null;
 }
 
 /* ── Loading fallback ── */
@@ -135,14 +130,12 @@ function Scene() {
       <pointLight position={[5, 2, 5]} intensity={0.4} color="#c63518" />
 
       <Suspense fallback={<LoadingFallback />}>
-        <group rotation-y={scrollState.progress * Math.PI * 0.5}>
-          <SpaceStationModel />
+        <SpaceStationModel />
 
-          {/* Annotation hotspots on the model */}
-          <Annotation position={[2, 2, 0]} label="AI Core" detail="Neural processing hub" active={phase >= 1} />
-          <Annotation position={[-3, 1, 2]} label="Solar Array" detail="12kW power generation" active={phase >= 2} />
-          <Annotation position={[0, 4, -2]} label="Comm Dish" detail="Deep space relay" active={phase >= 3} />
-        </group>
+        {/* Annotation hotspots on the model */}
+        <Annotation position={[2, 2, 0]} label="AI Engine" detail="Multi-model inference pipeline" active={phase >= 1} />
+        <Annotation position={[-3, 1, 2]} label="Edge Nodes" detail="Distributed compute clusters" active={phase >= 2} />
+        <Annotation position={[0, 4, -2]} label="Data Mesh" detail="Real-time sync network" active={phase >= 3} />
       </Suspense>
 
       <Environment preset="night" />
@@ -157,22 +150,22 @@ const brandPanels = [
   {
     title: "Where AI Reaches\nIts Peak",
     subtitle: "NEX APEX",
-    body: "We build AI systems that operate at the frontier of what's possible. From neural inference engines to orbital-class infrastructure.",
+    body: "We architect AI-native systems that push the boundary of what technology can achieve. From concept to deployment, we build what others haven't imagined yet.",
   },
   {
-    title: "AI Core\nModule",
-    subtitle: "NEURAL PROCESSING",
-    body: "Sub-100ms inference latency. Multi-modal AI pipeline processing 10M+ requests daily across distributed edge nodes.",
+    title: "Intelligent\nInfrastructure",
+    subtitle: "AI ENGINEERING",
+    body: "Production-grade ML pipelines with sub-100ms inference. We design, train, and deploy multi-modal AI systems that scale from prototype to millions of daily requests.",
   },
   {
-    title: "Solar\nArray",
-    subtitle: "POWER SYSTEMS",
-    body: "Sustainable AI infrastructure powered by renewable energy. 12kW solar generation capacity with 99.97% uptime guarantee.",
+    title: "Edge-First\nArchitecture",
+    subtitle: "CLOUD & COMPUTE",
+    body: "Distributed compute across global edge nodes. Our infrastructure adapts in real-time, routing intelligence to where it's needed with 99.97% uptime.",
   },
   {
-    title: "Deep Space\nRelay",
-    subtitle: "COMMUNICATIONS",
-    body: "Global mesh network connecting AI endpoints across 6 continents. Real-time synchronization with zero-trust security architecture.",
+    title: "Data-Driven\nProducts",
+    subtitle: "PRODUCT INTELLIGENCE",
+    body: "We transform raw data into competitive advantage. AI-powered features that learn, adapt, and deliver measurable business outcomes across every touchpoint.",
   },
 ];
 
@@ -203,7 +196,7 @@ export function ThreeShowcase() {
         pin: true,
         start: "top top",
         end: "+=4000",
-        scrub: 1,
+        scrub: 2,
         onUpdate: (self) => onScrollProgress(self.progress),
       },
     });
@@ -264,7 +257,7 @@ export function ThreeShowcase() {
       {/* Full-bleed 3D Canvas */}
       <div ref={canvasWrapRef} className="absolute inset-0">
         <Canvas
-          camera={{ position: [8, 3, 8], fov: 60 }}
+          camera={{ position: [3, 1.5, 3], fov: 42 }}
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.0 }}
         >

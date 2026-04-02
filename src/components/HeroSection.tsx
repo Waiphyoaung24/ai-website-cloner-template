@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
-import Image from "next/image";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -85,8 +84,6 @@ export function HeroSection({ className }: { className?: string }) {
     const heroTitle = section.querySelector(".hero-title");
     const crossMarkers = section.querySelector(".hero-cross-markers");
     const scrollPrompt = section.querySelector(".hero-scroll-prompt");
-    const heroLogo = section.querySelector(".hero-logo");
-
     // Title parallax on scroll
     if (heroTitle) {
       gsap.to(heroTitle, {
@@ -157,48 +154,6 @@ export function HeroSection({ className }: { className?: string }) {
       });
     }
 
-    // Logo animations (right-side positioned)
-    if (heroLogo) {
-      // Entrance: slide in from right with fade
-      gsap.from(heroLogo, {
-        x: 60,
-        autoAlpha: 0,
-        duration: 1.4,
-        delay: 0.3,
-        ease: "power3.out",
-      });
-
-      // Continuous float (gentle vertical bob)
-      gsap.to(heroLogo, {
-        y: -12,
-        duration: 2.5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      // Glow pulse via drop-shadow filter
-      gsap.to(heroLogo, {
-        filter: "drop-shadow(0 0 30px rgba(148,252,255,0.4))",
-        duration: 2,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut",
-      });
-
-      // Parallax on scroll
-      gsap.to(heroLogo, {
-        y: -120,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          scroller,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    }
   }, { scope: sectionRef });
 
   return (
@@ -221,8 +176,8 @@ export function HeroSection({ className }: { className?: string }) {
       {/* Spline 3D Interactive Tiles */}
       <SplineEmbed url={SPLINE_EMBED_URL} />
 
-      {/* Animated SVG paths — overlays Spline, pointer-events-none keeps tiles interactive */}
-      <div className="absolute inset-0 z-[3] pointer-events-none">
+      {/* Animated SVG paths — bottom-left only, avoids crossing 3D tiles */}
+      <div className="absolute bottom-0 left-0 w-[55%] h-[55%] z-[3] pointer-events-none overflow-hidden">
         <BackgroundPaths />
       </div>
 
@@ -231,19 +186,6 @@ export function HeroSection({ className }: { className?: string }) {
         {CROSS_POSITIONS.map((x) => (
           <CrossMarker key={x} xPercent={x} />
         ))}
-      </div>
-
-      {/* Logo — positioned on the right side */}
-      <div className="hero-logo pointer-events-none absolute right-6 top-[30%] z-[5] md:right-[60px] md:top-[25%]">
-        <Image
-          src="/images/full_color_logo.png"
-          alt=""
-          width={220}
-          height={220}
-          className="h-[100px] w-[100px] object-contain md:h-[200px] md:w-[200px]"
-          style={{ filter: "drop-shadow(0 0 15px rgba(148,252,255,0.2))" }}
-          priority
-        />
       </div>
 
       {/* NEX APEX title */}

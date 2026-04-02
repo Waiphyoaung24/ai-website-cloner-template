@@ -40,7 +40,7 @@ export default function RootLayout({
       lang="en"
       className={`${nevera.variable} ${nexa.variable} ${ibmPlexMono.variable} dark h-full antialiased`}
     >
-      <body className="min-h-full bg-[#0e1418] text-[#f0f1ef] overflow-hidden">
+      <body suppressHydrationWarning className="min-h-full bg-[#0e1418] text-[#f0f1ef] overflow-hidden">
         {children}
       </body>
     </html>
